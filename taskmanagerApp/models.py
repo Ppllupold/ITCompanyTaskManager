@@ -13,7 +13,7 @@ PRIORITY_CHOICES = (
 class Position(models.Model):
     name = models.CharField(max_length=100)
 
-    def str(self):
+    def __str__(self):
         return self.name
 
 
@@ -24,14 +24,14 @@ class Worker(AbstractUser):
         verbose_name = "driver"
         verbose_name_plural = "drivers"
 
-    def str(self):
+    def __str__(self):
         return f"{self.username} ({self.first_name} {self.last_name})"
 
 
 class TaskType(models.Model):
     name = models.CharField(max_length=100)
 
-    def str(self):
+    def __str__(self):
         return self.name
 
 
@@ -44,7 +44,7 @@ class Task(models.Model):
     task_type = models.ForeignKey(TaskType, on_delete=models.CASCADE)
     assignees = models.ManyToManyField(Worker, related_name="assigned_tasks")
 
-    def str(self):
+    def __str__(self):
         return self.name
 
 
@@ -53,7 +53,7 @@ class Team(models.Model):
     leader = models.ForeignKey(Worker, on_delete=models.SET_NULL, null=True, related_name="led_teams")
     members = models.ManyToManyField(Worker, related_name="teams")
 
-    def str(self):
+    def __str__(self):
         return self.name
 
 
@@ -67,5 +67,5 @@ class Project(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     is_completed = models.BooleanField(default=False)
 
-    def str(self):
+    def __str__(self):
         return self.name

@@ -1,0 +1,35 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+  <div class="pcoded-main-container">
+    <div class="pcoded-content">
+      <div class="container mt-4">
+        <h1>Task List</h1>
+        <table class="table table-striped">
+          <thead>
+          <tr>
+            <th>Name</th>
+            <th>Deadline</th>
+            <th>Priority</th>
+            <th>Completed</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for task in tasks %}
+            <tr>
+              <td>{{ task.name }}</td>
+              <td>{{ task.task_type}}</td>
+              <td>{{ task.}}</td>
+              <td>{% if task.is_completed %}✔️{% else %}❌{% endif %}</td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="4">No tasks available.</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}
