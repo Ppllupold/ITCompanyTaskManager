@@ -12,3 +12,6 @@ class TaskListView(generic.ListView):
     model = Task
     template_name = "TMapp/task-list.html"
 
+    def get_queryset(self):
+        task_list = Task.objects.filter(is_completed=False).select_related("task_type")
+        return task_list
