@@ -1,56 +1,49 @@
 {% extends "layouts/base.html" %}
-
 {% block stylesheets %}
-<style>
-  .table-hover tbody tr:hover {
-    background-color: #d4edda;
-    transition: background-color 0.3s ease;
-  }
-
-  .sorting-buttons {
-    margin-top: 20px;  
-    margin-bottom: 10px; 
-  }
-</style>
-{% endblock stylesheets %}
+  {% include "includes/list_styles.html" %}
+{% endblock %}
 
 {% block content %}
   <div class="pcoded-main-container">
     <div class="pcoded-content">
       <div class="container mt-4">
         <h1 class="text-center text-black p-3 shadow-lg"
-    style="background: linear-gradient(to top, gray, white); border-radius: 0; margin: 0; width: 100%;">Available positions</h1>
+            style="background: linear-gradient(to top, gray, white); border-radius: 0; margin: 0; width: 100%;">
+          Available positions</h1>
 
 
         <div class="sorting-buttons">
-          <a href="?sort=name" class="btn {% if request.GET.sort == 'name' or not request.GET.sort %}btn-secondary{% else %}btn-primary{% endif %}">
-              Sort by name
+          <a href="?sort=name"
+             class="btn {% if request.GET.sort == 'name' or not request.GET.sort %}btn-secondary{% else %}btn-primary{% endif %}">
+            Sort by name
           </a>
-          <a href="?sort=worker_count" class="btn {% if request.GET.sort == 'worker_count' %}btn-secondary{% else %}btn-primary{% endif %}">
-              Sort by worker count
+          <a href="?sort=worker_count"
+             class="btn {% if request.GET.sort == 'worker_count' %}btn-secondary{% else %}btn-primary{% endif %}">
+            Sort by worker count
           </a>
         </div>
 
         <div class="table-responsive">
-          <table class="table table-hover table-bordered shadow-sm rounded" style="background-color: white; font-size: 1.1rem;">
+          <table class="table table-hover table-bordered shadow-sm rounded"
+                 style="background-color: white; font-size: 1.1rem;">
             <thead class="bg-dark text-white">
-              <tr>
-                <th scope="col">Position Name</th>
-                <th scope="col">Amount of Workers</th>
-                <th scope="col">Required in projects</th>
-              </tr>
+            <tr>
+              <th scope="col">Position Name</th>
+              <th scope="col">Amount of Workers</th>
+              <th scope="col">Required in projects</th>
+            </tr>
             </thead>
             <tbody>
-              {% for position in position_list %}
+            {% for position in position_list %}
               <tr class="align-middle">
                 <td>{{ position.name }}</td>
                 <td>{{ position.worker_count }}</td>
               </tr>
-              {% empty %}
+            {% empty %}
               <tr>
                 <td colspan="3" class="text-center">No positions available.</td>
               </tr>
-              {% endfor %}
+            {% endfor %}
             </tbody>
           </table>
         </div>
