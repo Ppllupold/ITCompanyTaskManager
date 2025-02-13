@@ -1,0 +1,78 @@
+{% extends "layouts/base.html" %}
+{% load crispy_forms_filters %}
+
+
+{% block stylesheets %}
+  {% include "includes/list_styles.html" %}
+  <style>
+      label {
+          font-weight: bold;
+          font-size: 1rem;
+          color: #444;
+          display: block;
+          margin-bottom: 5px;
+          margin-top: 15px;
+      }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div class="pcoded-main-container">
+    <div class="pcoded-content">
+      <div class="container mt-4">
+
+        <h1 class="text-center text-black p-3 shadow-lg"
+            style="background: linear-gradient(to top, gray, white); border-radius: 0; margin: 0; width: 100%;">
+          Worker List</h1>
+
+
+        <form method="get" class="mb-4" style="max-width: 300px;">
+          {{ searchForm|crispy }}
+          <button type="submit" class="btn btn-primary">🔍 Search</button>
+          <a href="{% url 'taskmanager:worker-list' %}" class="btn btn-dark">Clear</a>
+        </form>
+
+
+        <div class="sorting-buttons mb-3">
+          <a href="?sort=task_count&search_field={{ request.GET.search_field }}&search_value={{ request.GET.search_value }}"
+             class="btn {% if request.GET.sort == 'task_count' %}btn-secondary{% else %}btn-primary{% endif %}">
+            Sort by Task Count
+          </a>
+          <a href="?sort=team_count&search_field={{ request.GET.search_field }}&search_value={{ request.GET.search_value }}"
+             class="btn {% if request.GET.sort == 'team_count' %}btn-secondary{% else %}btn-primary{% endif %}">
+            Sort by Team Count
+          </a>
+        </div>
+
+
+        <div class="table-responsive">
+          <table class="table table-hover table-bordered shadow-sm rounded"
+                 style="background-color: white; font-size: 1.1rem;">
+            <thead class="bg-dark text-white">
+            <tr>
+              <th scope="col">Username</th>
+              <th scope="col">Position</th>
+              <th scope="col">Task_count</th>
+              <th scope="col">Team_count</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for worker in worker_list %}
+              <tr class="align-middle">
+                <td>{{ worker.username }}</td>
+                <td>{{ worker.position.name }}</td>
+                <td>{{ worker.task_count }}</td>
+                <td>{{ worker.team_count }}</td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="3" class="text-center">No workers found.</td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
