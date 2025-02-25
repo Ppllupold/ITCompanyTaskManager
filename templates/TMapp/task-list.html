@@ -52,16 +52,10 @@
             <tbody>
             {% for task in task_list %}
               <tr class="align-middle">
-                <td>{{ task.name }}</td>
+                <td><a href="{% url "taskManagerApp:task-detail" task.id %}">{{ task.name }}</a></td>
                 <td>{{ task.task_type.name }}</td>
                 <td>
-                  <span class="badge {% if task.priority == 'CRITICAL' %} bg-danger
-                    {% elif task.priority == 'ESSENTIAL' %} bg-warning
-                    {% elif task.priority == 'HIGH_PRIORITY' %} bg-primary
-                    {% elif task.priority == 'MEDIUM_PRIORITY' %} bg-info
-                    {% else %} bg-secondary {% endif %}">
-                    {{ task.get_priority_display }}
-                  </span>
+                  {% include "includes/priority-buttons.html" %}
                 </td>
               </tr>
             {% empty %}

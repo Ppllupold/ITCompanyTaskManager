@@ -1,0 +1,7 @@
+<span class="badge {% if task.priority == 'CRITICAL' %} bg-danger
+                                          {% elif task.priority == 'ESSENTIAL' %} bg-warning
+                                          {% elif task.priority == 'HIGH_PRIORITY' %} bg-primary
+                                          {% elif task.priority == 'MEDIUM_PRIORITY' %} bg-info
+                                          {% else %} bg-secondary {% endif %} task-badge">
+                            {{ task.get_priority_display }}
+                        </span>
