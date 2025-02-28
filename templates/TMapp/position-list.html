@@ -1,9 +1,9 @@
 {% extends "layouts/base.html" %}
-{% block stylesheets %}
-  {% include "includes/list_styles.html" %}
-{% endblock %}
 
 {% block content %}
+  {% block stylesheets %}
+    {% include "includes/list_styles.html" %}
+  {% endblock %}
   <div class="pcoded-main-container">
     <div class="pcoded-content">
       <div class="container mt-4">
@@ -14,11 +14,11 @@
 
         <div class="sorting-buttons">
           <a href="?sort=name"
-             class="btn {% if request.GET.sort == 'name' or not request.GET.sort %}btn-secondary{% else %}btn-primary{% endif %}">
+             class="btn {% if request.GET.sort == "name" or not request.GET.sort %}btn-secondary{% else %}btn-primary{% endif %}">
             Sort by name
           </a>
           <a href="?sort=worker_count"
-             class="btn {% if request.GET.sort == 'worker_count' %}btn-secondary{% else %}btn-primary{% endif %}">
+             class="btn {% if request.GET.sort == "worker_count" %}btn-secondary{% else %}btn-primary{% endif %}">
             Sort by worker count
           </a>
         </div>
@@ -30,7 +30,6 @@
             <tr>
               <th scope="col">Position Name</th>
               <th scope="col">Amount of Workers</th>
-              <th scope="col">Required in projects</th>
             </tr>
             </thead>
             <tbody>

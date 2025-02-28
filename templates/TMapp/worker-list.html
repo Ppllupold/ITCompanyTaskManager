@@ -2,13 +2,11 @@
 {% load crispy_forms_filters %}
 
 
-{% block stylesheets %}
-  {% include "includes/list_styles.html" %}
-{% endblock %}
-
-
 
 {% block content %}
+  {% block stylesheets %}
+    {% include "includes/list_styles.html" %}
+  {% endblock %}
   <div class="pcoded-main-container">
     <div class="pcoded-content">
       <div class="container mt-4">
