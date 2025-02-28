@@ -137,3 +137,5 @@ INTERNAL_IPS = [
 ]
 
 AUTH_USER_MODEL = 'taskmanagerApp.Worker'
+
+LOGIN_REDIRECT_URL = "/"

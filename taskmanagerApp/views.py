@@ -1,9 +1,11 @@
-from django.db.models import Count
+from django.contrib.auth.forms import UserCreationForm
+from django.db.models import Count, Q
 from django.db.models.functions import Lower
 from django.shortcuts import render
+from django.urls import reverse_lazy
 from django.views import generic
 
-from taskmanagerApp.forms import WorkerSearchForm
+from taskmanagerApp.forms import WorkerSearchForm, CustomUserCreationForm
 from taskmanagerApp.models import Task, Position, Worker
 
 
@@ -48,8 +50,13 @@ class WorkerListView(generic.ListView):
 
     def get_queryset(self):
 
-        queryset = Worker.objects.annotate(task_count=Count("assigned_tasks"),
-                                           team_count=Count("teams")).select_related("position")
+        queryset = (
+            Worker.objects.annotate(task_count=Count("assigned_tasks",
+                                                     filter=Q(assigned_tasks__is_completed=False)),
+                                    team_count=Count("teams")).
+            select_related("position").
+            prefetch_related("assigned_tasks", "teams")
+        )
         search_form = WorkerSearchForm(self.request.GET)
         sort_param = self.request.GET.get("sort")
         if search_form.is_valid():
@@ -73,3 +80,25 @@ class WorkerListView(generic.ListView):
         context = super().get_context_data(**kwargs)
         context["searchForm"] = WorkerSearchForm(self.request.GET)
         return context
+
+
+class TaskDetailView(generic.DetailView):
+    model = Task
+    template_name = "TMapp/task-detail.html"
+
+
+class WorkerDetailView(generic.DetailView):
+    model = Worker
+    template_name = "TMapp/worker-detail.html"
+    queryset = Worker.objects.annotate(
+        task_count=Count("assigned_tasks"),
+        team_count=Count("teams"),
+    ).select_related("position").prefetch_related("assigned_tasks", "teams")
+
+
+class RegisterView(generic.CreateView):
+    model = Worker
+    template_name = "registration/register.html"
+    form_class = CustomUserCreationForm
+    success_url = reverse_lazy("login")
+
