@@ -4,17 +4,9 @@
 
 {% block stylesheets %}
   {% include "includes/list_styles.html" %}
-  <style>
-      label {
-          font-weight: bold;
-          font-size: 1rem;
-          color: #444;
-          display: block;
-          margin-bottom: 5px;
-          margin-top: 15px;
-      }
-  </style>
 {% endblock %}
+
+
 
 {% block content %}
   <div class="pcoded-main-container">
@@ -27,6 +19,12 @@
 
 
         <form method="get" class="mb-4" style="max-width: 300px;">
+          <label style="font-weight: bold; font-size: 1rem; color: #333; margin-top: 10px;
+           background: navajowhite;
+           padding: 6px 12px; border-radius: 8px;
+            display: inline-block; margin-bottom: 8px;">
+            Enter Search Field:
+          </label>
           {{ searchForm|crispy }}
           <button type="submit" class="btn btn-primary">🔍 Search</button>
           <a href="{% url 'taskmanager:worker-list' %}" class="btn btn-dark">Clear</a>

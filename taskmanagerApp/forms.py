@@ -14,7 +14,7 @@ class WorkerSearchForm(forms.Form):
         choices=SEARCH_CHOICES,
         required=False,
         widget=forms.Select(attrs={"class": "form-select"}),
-        label="Select Search field"
+        label=""
     )
 
     search_value = forms.CharField(
