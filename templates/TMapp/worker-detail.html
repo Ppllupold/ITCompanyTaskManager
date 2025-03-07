@@ -1,21 +1,9 @@
 {% extends "layouts/base.html" %}
 
-{% block stylesheets %}
-  <style>
-      .detail-card {
-          background: #f8f9fa;
-          border-radius: 10px;
-          padding: 20px;
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      }
-
-      .detail-info {
-          font-size: 1.1rem;
-      }
-  </style>
-{% endblock stylesheets %}
-
 {% block content %}
+  {% block stylesheets %}
+    {% include "includes/detail-card-styles.html" %}
+{% endblock stylesheets %}
   <div class="pcoded-main-container">
     <div class="pcoded-content">
       <div class="container mt-4">
