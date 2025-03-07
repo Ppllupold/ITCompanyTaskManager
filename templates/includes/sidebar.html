@@ -36,10 +36,12 @@
                 </button>
               </form>
             </li>
+            {% if request.user.is_authenticated %}
             <li class="nav-item">
               <a id="delete-account" href="{% url 'taskManagerApp:worker-delete' pk=request.user.id %}">
                 <i class="feather icon-trash-2"></i> Delete account
               </a>
+              {% endif %}
             </li>
           </ul>
         </li>

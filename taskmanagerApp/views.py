@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count, Q
 from django.db.models.functions import Lower
 from django.shortcuts import render
@@ -9,12 +10,12 @@ from taskmanagerApp.forms import WorkerSearchForm, CustomUserCreationForm
 from taskmanagerApp.models import Task, Position, Worker
 
 
-@login_required
+@login_required(login_url='login')
 def index(request):
     return render(request, "home/index.html")
 
 
-class TaskListView(generic.ListView):
+class TaskListView(LoginRequiredMixin, generic.ListView):
     model = Task
     template_name = "TMapp/task-list.html"
 
@@ -32,7 +33,7 @@ class TaskListView(generic.ListView):
         return queryset.order_by("priority")
 
 
-class PositionListView(generic.ListView):
+class PositionListView(LoginRequiredMixin, generic.ListView):
     model = Position
     template_name = "TMapp/position-list.html"
 
@@ -45,7 +46,7 @@ class PositionListView(generic.ListView):
         return queryset.order_by(Lower("name"))
 
 
-class WorkerListView(generic.ListView):
+class WorkerListView(LoginRequiredMixin, generic.ListView):
     model = Worker
     template_name = "TMapp/worker-list.html"
 
@@ -83,12 +84,12 @@ class WorkerListView(generic.ListView):
         return context
 
 
-class TaskDetailView(generic.DetailView):
+class TaskDetailView(LoginRequiredMixin, generic.DetailView):
     model = Task
     template_name = "TMapp/task-detail.html"
 
 
-class WorkerDetailView(generic.DetailView):
+class WorkerDetailView(LoginRequiredMixin, generic.DetailView):
     model = Worker
     template_name = "TMapp/worker-detail.html"
     queryset = Worker.objects.annotate(
