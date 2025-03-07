@@ -1,4 +1,4 @@
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
 from django.db.models.functions import Lower
 from django.shortcuts import render
@@ -9,6 +9,7 @@ from taskmanagerApp.forms import WorkerSearchForm, CustomUserCreationForm
 from taskmanagerApp.models import Task, Position, Worker
 
 
+@login_required
 def index(request):
     return render(request, "home/index.html")
 
@@ -96,9 +97,14 @@ class WorkerDetailView(generic.DetailView):
     ).select_related("position").prefetch_related("assigned_tasks", "teams")
 
 
+class WorkerDeleteView(generic.DeleteView):
+    model = Worker
+    template_name = "TMapp/worker_confirm_delete.html"
+    success_url = reverse_lazy("taskManagerApp:index")
+
+
 class RegisterView(generic.CreateView):
     model = Worker
     template_name = "registration/register.html"
     form_class = CustomUserCreationForm
     success_url = reverse_lazy("login")
-

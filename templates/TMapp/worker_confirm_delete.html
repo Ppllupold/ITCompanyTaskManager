@@ -1,0 +1,41 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Confirm Account Deletion{% endblock %}
+
+{% block content %}
+  <div class="pcoded-main-container">
+    <div class="pcoded-content">
+      <div class="row">
+        <div class="col-md-6 mx-auto">
+          <div class="card">
+            <div class="card-header">
+              <h5><i class="feather icon-alert-triangle text-danger"></i> Confirm Account Deletion</h5>
+            </div>
+            <div class="card-body">
+              <div class="alert alert-danger" role="alert">
+                <h4 class="alert-heading">Warning!</h4>
+                <p>You are about to permanently delete your account. This action cannot be undone.</p>
+                <hr>
+                <p class="mb-0">All your personal data, settings, and activity history will be permanently removed from
+                  our system.</p>
+              </div>
+
+              <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                  <label for="confirmation">Please type "DELETE" to confirm:</label>
+                  <input type="text" class="form-control" id="confirmation" name="confirmation" required>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                  <a href="/" class="btn btn-secondary">Cancel</a>
+                  <button type="submit" class="btn btn-danger">Delete My Account</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

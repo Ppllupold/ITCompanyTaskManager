@@ -1,56 +1,67 @@
+<!-- [ navigation menu ] start -->
+<nav class="pcoded-navbar menupos-fixed menu-light ">
+  <div
+      class="navbar-wrapper  ">
+    <div class="navbar-content scroll-div "
+    >
+      <ul class="nav pcoded-inner-navbar ">
+        <li class="nav-item pcoded-menu-caption">
+          <label>Navigation</label>
+        </li>
+        <li class="nav-item">
+          <a href="/" class="nav-link "><span class="pcoded-micon"><i class="feather icon-home"></i></span><span
+              class="pcoded-mtext">Home</span></a>
+        </li>
+        <li class="nav-item">
+          <a href="{% url "taskManagerApp:position-list" %}" class="nav-link "><span class="pcoded-micon"><i
+              class="feather icon-box"></i></span><span class="pcoded-mtext">Position List</span></a>
+        </li>
+        <li class="nav-item">
+          <a href="{% url "taskManagerApp:task-list" %}" class="nav-link "><span class="pcoded-micon"><i
+              class="feather icon-check-square"></i></span><span class="pcoded-mtext">Task List</span></a>
+        </li>
+        <li class="nav-item">
+          <a href="{% url "taskmanager:worker-list" %}" class="nav-link "><span class="pcoded-micon"><i
+              class="feather icon-users"></i></span><span class="pcoded-mtext">Workers</span></a>
+        </li>
+        <li class="nav-item pcoded-hasmenu">
+          <a href="#" class="nav-link "><span class="pcoded-micon"><i class="feather icon-lock"></i></span><span
+              class="pcoded-mtext">Authentication</span></a>
+          <ul class="pcoded-submenu">
+            <li class="nav-item">
+              <form method="post" action="{% url 'logout' %}" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="nav-link w-100 text-left border-0">
+                  <i class="feather icon-log-out"></i> Logout
+                </button>
+              </form>
+            </li>
+            <li class="nav-item">
+              <a id="delete-account" href="{% url 'taskManagerApp:worker-delete' pk=request.user.id %}">
+                <i class="feather icon-trash-2"></i> Delete account
+              </a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
 
-	<!-- [ navigation menu ] start -->
-	<nav class="pcoded-navbar menupos-fixed menu-light ">
-		<div
-			class="navbar-wrapper  ">
-			<div class="navbar-content scroll-div "
-				>
-				<ul class="nav pcoded-inner-navbar ">
-					<li class="nav-item pcoded-menu-caption">
-						<label>Navigation</label>
-					</li>
-					<li class="nav-item">
-						<a href="/" class="nav-link "><span class="pcoded-micon"><i class="feather icon-home"></i></span><span
-								class="pcoded-mtext">Home</span></a>
-					</li>
-					<li class="nav-item">
-						<a href="{% url "taskManagerApp:position-list" %}" class="nav-link "><span class="pcoded-micon"><i
-									class="feather icon-box"></i></span><span class="pcoded-mtext">Position List</span></a>
-					</li>
-					<li class="nav-item">
-						<a href= "{% url "taskManagerApp:task-list" %}" class="nav-link "><span class="pcoded-micon"><i
-									class="feather icon-check-square"></i></span><span class="pcoded-mtext">Task List</span></a>
-					</li>
-					<li class="nav-item">
-						<a href="{% url "taskmanager:worker-list" %}" class="nav-link "><span class="pcoded-micon"><i
-									class="feather icon-users"></i></span><span class="pcoded-mtext">Workers</span></a>
-					</li>
-					<li class="nav-item pcoded-menu-caption">
-						<label>Chart & Maps</label>
-					</li>
-					<li class="nav-item">
-						<a href="/chart-apex.html" class="nav-link "><span class="pcoded-micon"><i
-									class="feather icon-pie-chart"></i></span><span class="pcoded-mtext">Chart</span></a>
-					</li>
-					<li class="nav-item">
-						<a href="/map-google.html" class="nav-link "><span class="pcoded-micon"><i class="feather icon-map"></i></span><span
-								class="pcoded-mtext">Maps</span></a>
-					</li>
-					<li class="nav-item pcoded-menu-caption">
-						<label>Pages</label>
-					</li>
-					<li class="nav-item pcoded-hasmenu">
-						<a href="#" class="nav-link "><span class="pcoded-micon"><i class="feather icon-lock"></i></span><span
-								class="pcoded-mtext">Authentication</span></a>
-						<ul class="pcoded-submenu">
-							<li><a href= {% url 'taskManagerApp:register' %}>Sign up</a></li>
-							<li><a href={% url "login" %}>Sign in</a></li>
-						</ul>
-					</li>
-				</ul>
-				
-			</div>
-		</div>
-	</nav>
-	<!-- [ navigation menu ] end -->
+  {% block stylesheets %}
+    <style>
+
+        #delete-account::before {
+            content: none !important;
+        }
+
+        #delete-account:hover {
+            color: red;
+            text-decoration: underline;
+            transition: 0.3s;
+        }
+    </style>
+  {% endblock %}
+
+</nav>
+
     
