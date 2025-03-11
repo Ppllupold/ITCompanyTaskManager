@@ -114,6 +114,13 @@ class WorkerDeleteView(generic.DeleteView):
     success_url = reverse_lazy("taskManagerApp:index")
 
 
+class ProjectListView(generic.ListView):
+    model = Project
+    template_name = "TMapp/project-list.html"
+    queryset = (Project.objects.annotate(member_count=Count("teams__members", distinct=True))
+                .prefetch_related("teams"))
+
+
 class RegisterView(generic.CreateView):
     model = Worker
     template_name = "registration/register.html"

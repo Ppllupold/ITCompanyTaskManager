@@ -13,6 +13,10 @@
               class="pcoded-mtext">Home</span></a>
         </li>
         <li class="nav-item">
+          <a href="{% url "taskManagerApp:project-list" %}" class="nav-link "><span class="pcoded-micon"><i
+              class="feather icon-folder"></i></span><span class="pcoded-mtext">Projects</span></a>
+        </li>
+        <li class="nav-item">
           <a href="{% url "taskManagerApp:position-list" %}" class="nav-link "><span class="pcoded-micon"><i
               class="feather icon-box"></i></span><span class="pcoded-mtext">Position List</span></a>
         </li>
@@ -37,11 +41,11 @@
               </form>
             </li>
             {% if request.user.is_authenticated %}
-            <li class="nav-item">
+              <li class="nav-item">
               <a id="delete-account" href="{% url 'taskManagerApp:worker-delete' pk=request.user.id %}">
                 <i class="feather icon-trash-2"></i> Delete account
               </a>
-              {% endif %}
+            {% endif %}
             </li>
           </ul>
         </li>
