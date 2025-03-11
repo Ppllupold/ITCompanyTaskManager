@@ -43,6 +43,7 @@ class Task(models.Model):
     priority = models.CharField(max_length=100, choices=PRIORITY_CHOICES)
     task_type = models.ForeignKey(TaskType, on_delete=models.CASCADE)
     assignees = models.ManyToManyField(Worker, related_name="assigned_tasks")
+    project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="tasks")
 
     def __str__(self):
         return self.name
@@ -62,8 +63,7 @@ class Project(models.Model):
     description = models.TextField()
     deadline = models.DateTimeField()
     priority = models.CharField(max_length=100, choices=PRIORITY_CHOICES)
-    team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name="projects")
-    tasks = models.ManyToManyField(Task, related_name="projects")
+    team = models.ManyToManyField(Team, related_name="projects")
     created_at = models.DateTimeField(auto_now_add=True)
     is_completed = models.BooleanField(default=False)
 
