@@ -15,19 +15,21 @@
         <div class="detail-card">
           <h4 class="text-dark">Task Information</h4>
           <hr>
-          <p class="detail-info"><strong>Name:</strong>{{ task.name }}</p>
-          <p class="detail-info"><strong>Type:</strong> {{ task.task_type.name }}</p>
+          <p class="detail-info"><strong>Deadline:</strong>{{ task.deadline }}</p>
+          <p class="detail-info"><strong>Assignees:</strong>
+            {% if task.assignees.all %}
+              {% for assignee in task.assignees.all %}
+                {{ assignee.username }}{% if not forloop.last %}, {% endif %}
+              {% endfor %}
+            {% else %}
+              <span class="text-muted">No assignees</span>
+            {% endif %}
+          </p>
           <p class="detail-info">
             <strong>Priority:</strong>
             {% include "includes/priority-buttons.html" %}
           </p>
           <p class="detail-info"><strong>Description:</strong> {{ task.description }}</p>
-          <p class="detail-info"><strong>Belongs to Project:</strong>
-            {% if task.projects %}
-              {{ task.projects }}
-            {% else %}
-
-            {% endif %}</p>
         </div>
       </div>
     </div>

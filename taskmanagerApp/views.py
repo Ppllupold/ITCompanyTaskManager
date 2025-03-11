@@ -6,8 +6,8 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import generic
 
-from taskmanagerApp.forms import WorkerSearchForm, CustomUserCreationForm
-from taskmanagerApp.models import Task, Position, Worker
+from taskmanagerApp.forms import WorkerSearchForm, CustomUserCreationForm, TaskSearchForm
+from taskmanagerApp.models import Task, Position, Worker, Project
 
 
 @login_required(login_url='login')
@@ -20,17 +20,27 @@ class TaskListView(LoginRequiredMixin, generic.ListView):
     template_name = "TMapp/task-list.html"
 
     def get_queryset(self):
-        queryset = Task.objects.filter(is_completed=False).select_related("task_type")
-
-        query = self.request.GET.get("searchFor", "")
-        if query:
-            queryset = queryset.filter(name__icontains=query)
-
+        queryset = Task.objects.filter(is_completed=False).select_related("task_type", "project")
+        search_form = TaskSearchForm(self.request.GET)
         sort_param = self.request.GET.get("sort", "priority")
+
+        if search_form.is_valid():
+            search_field = search_form.cleaned_data["search_field"]
+            search_value = search_form.cleaned_data["search_value"]
+
+            if search_field == "task_name":
+               queryset = queryset.filter(name__icontains=search_value)
+            elif search_field == "project_name":
+                queryset = queryset.filter(project__name__icontains=search_value)
 
         if sort_param == "task_type":
             return queryset.order_by("task_type__name")
         return queryset.order_by("priority")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["search_form"] = TaskSearchForm(self.request.GET)
+        return context
 
 
 class PositionListView(LoginRequiredMixin, generic.ListView):

@@ -24,6 +24,26 @@ class WorkerSearchForm(forms.Form):
     )
 
 
+class TaskSearchForm(forms.Form):
+    SEARCH_CHOICES = [
+        ("task_name", "Task Name"),
+        ("project_name", "Project Name"),
+    ]
+
+    search_field = forms.ChoiceField(
+        choices=SEARCH_CHOICES,
+        required=False,
+        widget=forms.Select(attrs={"class": "form-select"}),
+        label=""
+    )
+
+    search_value = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Enter search value"}),
+        label=""
+    )
+
+
 class CustomUserCreationForm(UserCreationForm):
     position = forms.ModelChoiceField(
         queryset=Position.objects.all(),

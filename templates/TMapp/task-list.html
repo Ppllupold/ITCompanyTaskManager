@@ -1,10 +1,11 @@
 {% extends "layouts/base.html" %}
+{% load crispy_forms_filters %}
 
 
 {% block content %}
   {% block stylesheets %}
-  {% include "includes/list_styles.html" %}
-{% endblock %}
+    {% include "includes/list_styles.html" %}
+  {% endblock %}
 
   <div class="pcoded-main-container">
     <div class="pcoded-content">
@@ -15,15 +16,16 @@
           Task List</h1>
 
 
-        <form method="get" class="mb-4">
-          <div class="input-group shadow-sm">
-            <input type="text" name="searchFor" class="form-control rounded-pill border-primary"
-                   placeholder="Search tasks by name" value="{{ request.GET.searchFor }}"
-                   style="padding-left: 45px;">
-            <button class="btn btn-primary rounded-pill px-4" type="submit">
-              🔍 Search
-            </button>
-          </div>
+        <form method="get" class="mb-4" style="max-width: 300px;">
+          <label style="font-weight: bold; font-size: 1rem; color: #333; margin-top: 10px;
+           background: navajowhite;
+           padding: 6px 12px; border-radius: 8px;
+            display: inline-block; margin-bottom: 8px;">
+            Enter Search Field:
+          </label>
+          {{ search_form|crispy }}
+          <button type="submit" class="btn btn-primary">🔍 Search</button>
+          <a href="{% url 'taskmanager:task-list' %}" class="btn btn-dark">Clear</a>
         </form>
 
 
@@ -47,6 +49,7 @@
               <th scope="col">Task Name</th>
               <th scope="col">Task Type</th>
               <th scope="col">Priority</th>
+              <th scope="col">Project</th>
             </tr>
             </thead>
             <tbody>
@@ -56,6 +59,9 @@
                 <td>{{ task.task_type.name }}</td>
                 <td>
                   {% include "includes/priority-buttons.html" %}
+                </td>
+                <td>
+                  {{ task.project.name }}
                 </td>
               </tr>
             {% empty %}
