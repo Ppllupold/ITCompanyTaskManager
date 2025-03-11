@@ -1,7 +1,8 @@
-<span class="badge {% if task.priority == 'CRITICAL' %} bg-danger
-                                          {% elif task.priority == 'ESSENTIAL' %} bg-warning
-                                          {% elif task.priority == 'HIGH_PRIORITY' %} bg-primary
-                                          {% elif task.priority == 'MEDIUM_PRIORITY' %} bg-info
-                                          {% else %} bg-secondary {% endif %} task-badge">
-                            {{ task.get_priority_display }}
-                        </span>
+<span class="badge 
+    {% if object.priority == 'CRITICAL' %} bg-danger
+    {% elif object.priority == 'ESSENTIAL' %} bg-warning
+    {% elif object.priority == 'HIGH_PRIORITY' %} bg-primary
+    {% elif object.priority == 'MEDIUM_PRIORITY' %} bg-info
+    {% else %} bg-secondary {% endif %} task-badge">
+    {{ object.get_priority_display }}
+</span>

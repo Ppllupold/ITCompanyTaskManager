@@ -58,7 +58,7 @@
                 <td><a href="{% url "taskManagerApp:task-detail" task.id %}">{{ task.name }}</a></td>
                 <td>{{ task.task_type.name }}</td>
                 <td>
-                  {% include "includes/priority-buttons.html" %}
+                  {% include "includes/priority-buttons.html" with object=task %}
                 </td>
                 <td>
                   {{ task.project.name }}
