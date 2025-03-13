@@ -38,7 +38,7 @@
                 <td>{{ task.name }}</td>
                 <td>{{ task.task_type.name }}</td>
                 <td>
-                  {% include "includes/priority-buttons.html" %}
+                  {% include "includes/priority-buttons.html" with object=task %}
                 </td>
                 <td>{{ task.deadline|date:"Y-m-d H:i" }}</td>
                 <td>{% if task.is_completed %}✔️ Completed{% else %}❌ Pending{% endif %}</td>
