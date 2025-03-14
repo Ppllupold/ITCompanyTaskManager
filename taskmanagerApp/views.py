@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import generic
 
-from taskmanagerApp.forms import WorkerSearchForm, CustomUserCreationForm, TaskSearchForm
+from taskmanagerApp.forms import WorkerSearchForm, CustomUserCreationForm, TaskSearchForm, ProjectForm
 from taskmanagerApp.models import Task, Position, Worker, Project
 
 
@@ -29,7 +29,7 @@ class TaskListView(LoginRequiredMixin, generic.ListView):
             search_value = search_form.cleaned_data["search_value"]
 
             if search_field == "task_name":
-               queryset = queryset.filter(name__icontains=search_value)
+                queryset = queryset.filter(name__icontains=search_value)
             elif search_field == "project_name":
                 queryset = queryset.filter(project__name__icontains=search_value)
 
@@ -108,17 +108,34 @@ class WorkerDetailView(LoginRequiredMixin, generic.DetailView):
     ).select_related("position").prefetch_related("assigned_tasks", "teams")
 
 
-class WorkerDeleteView(generic.DeleteView):
+class WorkerDeleteView(LoginRequiredMixin, generic.DeleteView):
     model = Worker
     template_name = "TMapp/worker_confirm_delete.html"
     success_url = reverse_lazy("taskManagerApp:index")
 
 
-class ProjectListView(generic.ListView):
+class ProjectListView(LoginRequiredMixin, generic.ListView):
     model = Project
     template_name = "TMapp/project-list.html"
     queryset = (Project.objects.annotate(member_count=Count("teams__members", distinct=True))
                 .prefetch_related("teams"))
+
+class ProjectDetailView(LoginRequiredMixin, generic.DetailView):
+    model = Project
+    template_name = "TMapp/project-detail.html"
+
+
+class ProjectCreateView(LoginRequiredMixin, generic.CreateView):
+    model = Project
+    template_name = "TMapp/project-create.html"
+    form_class = ProjectForm
+    success_url = reverse_lazy("taskManagerApp:project-list")
+
+
+class ProjectDeleteView(LoginRequiredMixin, generic.DeleteView):
+    model = Project
+    template_name = "TMapp/project_confirm_delete.html"
+    success_url = reverse_lazy("taskManagerApp:project-list")
 
 
 class RegisterView(generic.CreateView):

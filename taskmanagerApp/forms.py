@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
-from taskmanagerApp.models import Worker, Position
+from taskmanagerApp.models import Worker, Position, Project
 
 
 class WorkerSearchForm(forms.Form):
@@ -73,3 +73,18 @@ class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = Worker
         fields = ("position", "email",) + UserCreationForm.Meta.fields
+
+
+class ProjectForm(forms.ModelForm):
+    class Meta:
+        model = Project
+        fields = ["name", "description", "deadline", "priority", "teams"]
+        widgets = {
+            "name": forms.TextInput(attrs={"class": "form-control", "placeholder": "Enter project name"}),
+            "description": forms.Textarea(
+                attrs={"class": "form-control", "rows": 3, "placeholder": "Enter project description"}),
+            "deadline": forms.DateTimeInput(attrs={"class": "form-control", "type": "datetime-local"}),
+            "priority": forms.Select(attrs={"class": "form-select"}),
+            "teams": forms.SelectMultiple(attrs={"class": "form-select", "size": "4"}),
+        }
+        labels = {}
