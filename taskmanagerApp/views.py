@@ -7,7 +7,7 @@ from django.urls import reverse_lazy
 from django.views import generic
 
 from taskmanagerApp.forms import WorkerSearchForm, CustomUserCreationForm, TaskSearchForm, ProjectForm
-from taskmanagerApp.models import Task, Position, Worker, Project
+from taskmanagerApp.models import Task, Position, Worker, Project, Team
 
 
 @login_required(login_url='login')
@@ -120,6 +120,7 @@ class ProjectListView(LoginRequiredMixin, generic.ListView):
     queryset = (Project.objects.annotate(member_count=Count("teams__members", distinct=True))
                 .prefetch_related("teams"))
 
+
 class ProjectDetailView(LoginRequiredMixin, generic.DetailView):
     model = Project
     template_name = "TMapp/project-detail.html"
@@ -132,10 +133,29 @@ class ProjectCreateView(LoginRequiredMixin, generic.CreateView):
     success_url = reverse_lazy("taskManagerApp:project-list")
 
 
+class ProjectUpdateView(LoginRequiredMixin, generic.UpdateView):
+    model = Project
+    template_name = "TMapp/project-create.html"
+    form_class = ProjectForm
+    success_url = reverse_lazy("taskManagerApp:project-list")
+
+
 class ProjectDeleteView(LoginRequiredMixin, generic.DeleteView):
     model = Project
     template_name = "TMapp/project_confirm_delete.html"
     success_url = reverse_lazy("taskManagerApp:project-list")
+
+
+class ProjectTeamsView(generic.DetailView):
+    model = Project
+    template_name = "TMapp/project-teams-list.html"
+    context_object_name = "project"
+
+
+class TeamUpdateView(LoginRequiredMixin, generic.UpdateView):
+    model = Team
+    template_name = "TMapp/team_form.html"
+    success_url = reverse_lazy("taskManagerApp:project-teams-list")
 
 
 class RegisterView(generic.CreateView):

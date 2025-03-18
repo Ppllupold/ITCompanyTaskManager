@@ -1,74 +1,98 @@
 {% extends "layouts/base.html" %}
-
 {% block title %}Projects{% endblock %}
 
-{% block content %}
-  <div class="pcoded-main-container">
-    <div class="pcoded-content">
-      <div class="page-header d-flex justify-content-between align-items-center">
-        <div class="page-block">
-          <h5 class="m-b-10">Projects</h5>
-        </div>
-        <div>
-          <a href="{% url 'taskManagerApp:project-create' %}" class="btn btn-primary">
-            <i class="feather icon-plus mr-1"></i> Create New
-          </a>
-        </div>
-      </div>
+{% block stylesheets %}
+<style>
+  .project-card {
+    position: relative;
+    overflow: visible !important;
+    transition: box-shadow 0.3s;
+  }
 
+  .project-card:hover {
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .dropdown-menu {
+    z-index: 1050;
+  }
+  
+  .project-card-container {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .project-card-container.visible {
+    opacity: 1;
+    transform: translateY(0);
+    transition: all 0.6s ease;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="pcoded-main-container">
+  <div class="pcoded-content">
+    <div class="container mt-4">
+      <div class="page-header d-flex justify-content-between align-items-center">
+          <div class="page-block">
+            <h3 class="m-b-10">Projects</h3>
+          </div>
+          <div>
+            <a href="{% url 'taskManagerApp:project-create' %}" class="btn btn-outline-secondary">
+              <i class="feather icon-plus mr-1"></i>Create new
+            </a>
+          </div>
+        </div>
 
       <div class="row">
         {% for project in project_list %}
-          <div class="col-md-6 col-xl-4">
-            <div class="card project-card mb-4">
-              <div class="card-body" style="border-left: 5px solid
-                  {% if project.priority == 'CRITICAL' %}#dc3545
-                  {% elif project.priority == 'ESSENTIAL' %}#ffc107
-                  {% elif project.priority == 'HIGH_PRIORITY' %}#0d6efd
-                  {% elif project.priority == 'MEDIUM_PRIORITY' %}#0dcaf0
-                  {% else %}#6c757d
-                  {% endif %};
-                  border-radius: 4px;
-                  background-color:
-                  {% if project.priority == 'CRITICAL' %}#fff1f0
-                  {% elif project.priority == 'ESSENTIAL' %}#fffbe6
-                  {% elif project.priority == 'HIGH_PRIORITY' %}#f0f5ff
-                  {% elif project.priority == 'MEDIUM_PRIORITY' %}#e6fffb
-                  {% else %}#f5f5f5
-                  {% endif %};">
-                <div class="row align-items-center">
-                  <div class="col">
-                    <h5 class="project-title">{{ project.name }}</h5>
-                    <div class="d-flex align-items-center mt-2">
-                      {% include "includes/priority-buttons.html" with object=project %}
-                      {% if project.created_at %}
-                        <span class="text-muted ml-3">
-                                        <i class="feather icon-clock mr-1"></i> Created: {{ project.created_at|date:"M d, Y" }}
-                                    </span>
-                      {% endif %}
-                    </div>
-                  </div>
-                  <div class="col-auto">
-                    <div class="dropdown">
-                      <button class="btn btn-icon btn-light btn-sm" type="button" data-toggle="dropdown"
-                              aria-haspopup="true" aria-expanded="false">
-                        <i class="feather icon-more-horizontal"></i>
-                      </button>
-                      <div class="dropdown-menu dropdown-menu-right">
-                        <a class="dropdown-item" href={% url "taskmanager:project-detail" pk=project.id %}>
-                          <i class="feather icon-eye mr-2"></i>View Details/Teams
-                        </a>
-                        <a class="dropdown-item text-danger" href="{% url "taskmanager:project-delete" project.id %}">
-                          <i class="feather icon-trash-2 mr-2"></i>Delete
-                        </a>
-                      </div>
-                    </div>
-                  </div>
+          <div class="col-md-6 col-xl-4 mb-4 project-card-container">
+            <div class="card shadow-sm h-100 project-card" style="
+              border-left: 5px solid 
+              {% if project.priority == 'CRITICAL' %}#dc3545
+              {% elif project.priority == 'ESSENTIAL' %}#ffc107
+              {% elif project.priority == 'HIGH_PRIORITY' %}#0d6efd
+              {% elif project.priority == 'MEDIUM_PRIORITY' %}#0dcaf0
+              {% else %}#6c757d
+              {% endif %};
+              background-color:
+              {% if project.priority == 'CRITICAL' %}#fff1f0
+              {% elif project.priority == 'ESSENTIAL' %}#fffbe6
+              {% elif project.priority == 'HIGH_PRIORITY' %}#f0f5ff
+              {% elif project.priority == 'MEDIUM_PRIORITY' %}#e6fffb
+              {% else %}#f8f9fa
+              {% endif %};
+            ">
+              <div class="card-body d-flex flex-column">
+                <h5 class="project-title text-primary">{{ project.name }}</h5>
+                <div class="d-flex align-items-center mt-2 mb-3">
+                  {% include "includes/priority-buttons.html" with object=project %}
+                  {% if project.created_at %}
+                    <span class="text-muted ml-3">
+                      <i class="feather icon-clock mr-1"></i> Created: {{ project.created_at|date:"M d, Y" }}
+                    </span>
+                  {% endif %}
                 </div>
-                <div class="d-flex justify-content-between mt-3">
-                  <div>
-                    <i class="feather icon-users text-muted mr-1"></i>
-                    <span class="text-muted">{{ project.member_count }}</span>
+                <div class="d-flex justify-content-between align-items-center mt-auto">
+                  <div class="text-muted">
+                    <i class="feather icon-users mr-1"></i>{{ project.member_count }} members
+                  </div>
+                  <div class="dropdown">
+                    <button class="btn btn-light btn-sm" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <i class="feather icon-more-vertical"></i>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right shadow-sm">
+                      <a class="dropdown-item" href="{% url 'taskManagerApp:project-detail' pk=project.id %}">
+                        <i class="feather icon-eye mr-2"></i> View Details
+                      </a>
+                      <a class="dropdown-item" href="{% url 'taskManagerApp:project-teams' pk=project.id %}">
+                        <i class="feather icon-users mr-2"></i> Teams
+                      </a>
+                      <a class="dropdown-item text-danger" href="{% url 'taskManagerApp:project-delete' pk=project.id %}">
+                        <i class="feather icon-trash-2 mr-2"></i> Delete
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -76,20 +100,31 @@
           </div>
         {% empty %}
           <div class="col-12">
-            <div class="card">
-              <div class="card-body text-center py-5">
-                <i class="feather icon-info text-muted mb-3" style="font-size: 48px;"></i>
-                <h5 class="mb-3">No Projects Available</h5>
-                <p class="text-muted">There are no projects created yet.</p>
-                <a href="{% url 'taskManagerApp:project-create' %}" class="btn btn-primary mt-2">
-                  <i class="feather icon-plus mr-1"></i> Create New Project
-                </a>
-              </div>
+            <div class="alert alert-info text-center py-5 shadow-sm">
+              <i class="feather icon-info mb-3" style="font-size: 48px;"></i>
+              <h5 class="mb-3">No Projects Available</h5>
+              <p class="text-muted">There are no projects created yet.</p>
+              <a href="{% url 'taskManagerApp:project-create' %}" class="btn btn-primary mt-2">
+                <i class="feather icon-plus mr-1"></i> Create New Project
+              </a>
             </div>
           </div>
         {% endfor %}
       </div>
-
     </div>
   </div>
+</div>
+
+{% block extra_scripts %}
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const cards = document.querySelectorAll('.project-card-container');
+    cards.forEach((card, index) => {
+      setTimeout(() => {
+        card.classList.add('visible');
+      }, 150 * index);
+    });
+  });
+</script>
+{% endblock %}
 {% endblock %}

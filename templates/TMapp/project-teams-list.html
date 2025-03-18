@@ -1,0 +1,85 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %}Teams for {{ project.name }}{% endblock %}
+
+{% block content %}
+<div class="pcoded-main-container">
+  <div class="pcoded-content">
+    <div class="container mt-4">
+
+      <div class="page-header d-flex justify-content-between align-items-center">
+        <div class="page-block">
+          <h3 class="m-b-10">Teams for {{ project.name }}</h3>
+        </div>
+        <div>
+          <a href="{% url 'taskManagerApp:project-list' %}" class="btn btn-outline-secondary">
+            <i class="feather icon-arrow-left mr-1"></i>Back to Projects
+          </a>
+        </div>
+      </div>
+
+      {% if project.teams.all %}
+        <div class="row">
+          {% for team in project.teams.all %}
+            <div class="col-md-6 col-xl-4 mb-4">
+              <div class="card shadow-sm h-100 team-card position-relative">
+                <div class="card-body d-flex flex-column">
+                  <div class="d-flex justify-content-between align-items-start mb-3">
+                    <h5 class="card-title text-primary">{{ team.name }}</h5>
+                    <div class="dropdown">
+                      <button class="btn btn-light btn-sm" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="feather icon-more-vertical"></i>
+                      </button>
+                      <div class="dropdown-menu dropdown-menu-right shadow-sm">
+                        <a class="dropdown-item disabled" href="#">
+                          <i class="feather icon-eye mr-2"></i> View Members
+                        </a>
+                        <a class="dropdown-item disabled" href="#">
+                          <i class="feather icon-edit mr-2"></i> Edit Team
+                        </a>
+                        <a class="dropdown-item text-danger disabled" href="#">
+                          <i class="feather icon-trash-2 mr-2"></i> Remove from Project
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                  <p class="card-text text-muted mb-3">
+                    <i class="feather icon-users mr-1"></i> {{ team.members.count }} members
+                  </p>
+                  <a href="#" class="btn btn-outline-primary btn-sm mt-auto disabled" aria-disabled="true">
+                    <i class="feather icon-eye mr-1"></i> View details
+                  </a>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="alert alert-info text-center py-4 shadow-sm">
+          <i class="feather icon-info mb-3" style="font-size: 48px;"></i>
+          <h5 class="mb-3">No teams assigned yet</h5>
+          <p>Add teams to this project to see them here.</p>
+        </div>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+
+{% block extra_scripts %}
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+      const cards = document.querySelectorAll('.team-card');
+      cards.forEach((card, index) => {
+          card.style.opacity = 0;
+          setTimeout(() => {
+              card.style.transition = "opacity 0.6s ease, transform 0.6s ease";
+              card.style.opacity = 1;
+              card.style.transform = "translateY(0)";
+          }, 150 * index);
+          card.style.transform = "translateY(20px)";
+      });
+  });
+</script>
+{% endblock %}
+{% endblock %}

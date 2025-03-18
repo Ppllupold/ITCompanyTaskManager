@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
-from taskmanagerApp.models import Worker, Position, Project
+from taskmanagerApp.models import Worker, Position, Project, Team
 
 
 class WorkerSearchForm(forms.Form):
