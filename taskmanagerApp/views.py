@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import generic
 
-from taskmanagerApp.forms import WorkerSearchForm, CustomUserCreationForm, TaskSearchForm, ProjectForm
+from taskmanagerApp.forms import WorkerSearchForm, CustomUserCreationForm, TaskSearchForm, ProjectForm, TeamForm
 from taskmanagerApp.models import Task, Position, Worker, Project, Team
 
 
@@ -155,7 +155,34 @@ class ProjectTeamsView(generic.DetailView):
 class TeamUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = Team
     template_name = "TMapp/team_form.html"
-    success_url = reverse_lazy("taskManagerApp:project-teams-list")
+    form_class = TeamForm
+
+    def get_success_url(self):
+        project = self.object.projects.first()
+        return reverse_lazy("taskManagerApp:project-teams", kwargs={"pk": project.pk})
+
+
+class TeamCreateView(LoginRequiredMixin, generic.CreateView):
+    model = Team
+    template_name = "TMapp/team_form.html"
+    form_class = TeamForm
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        form.instance.members.set(form.cleaned_data["members"])
+        form.instance.save()
+
+        project_id = self.request.GET.get("project_id")
+        if project_id:
+            project = Project.objects.get(id=project_id)
+            project.teams.add(self.object)
+        return response
+
+    def get_success_url(self):
+        project_id = self.request.GET.get("project_id")
+        if project_id:
+            return reverse_lazy("taskmanager:project-teams", kwargs={"pk": project_id})
+        return reverse_lazy("taskmanager:project-list")
 
 
 class RegisterView(generic.CreateView):

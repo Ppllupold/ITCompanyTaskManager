@@ -88,3 +88,24 @@ class ProjectForm(forms.ModelForm):
             "teams": forms.SelectMultiple(attrs={"class": "form-select", "size": "4"}),
         }
         labels = {}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.deadline:
+            self.initial["deadline"] = self.instance.deadline.strftime("%Y-%m-%dT%H:%M")
+
+
+class TeamForm(forms.ModelForm):
+    class Meta:
+        model = Team
+        fields = ["name", "members", "leader"]
+        widgets = {
+            "name": forms.TextInput(attrs={"class": "form-control", "placeholder": "Enter team name"}),
+            "members": forms.SelectMultiple(attrs={"class": "form-control selectpicker", "data-live-search": "true"}),
+            "leader": forms.Select(attrs={"class": "form-control"}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.leader:
+            self.initial["leader"] = self.instance.leader

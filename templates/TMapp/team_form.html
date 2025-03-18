@@ -1,0 +1,135 @@
+{% extends "layouts/base.html" %}
+{% load crispy_forms_filters %}
+{% block title %}{{ object|yesno:"Update,Create" }} Team{% endblock %}
+
+{% block content %}
+  <div class="pcoded-main-container">
+    <div class="pcoded-content">
+      <div class="page-header">
+        <div class="page-block">
+          <div class="row align-items-center">
+            <div class="col-md-12">
+              <div class="page-header-title">
+                <h5 class="m-b-10">{{ object|yesno:"Update,Create" }} Team</h5>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-header">
+              <h5><i class="feather icon-users mr-2"></i>Team Details</h5>
+            </div>
+            <div class="card-body">
+              <form method="post">
+                {% csrf_token %}
+
+                <div class="form-group row mb-4">
+                  <label for="{{ form.name.id_for_label }}" class="col-sm-2 col-form-label">
+                    <i class="feather icon-tag text-primary mr-2"></i>Team Name*
+                  </label>
+                  <div class="col-sm-10">
+                    {{ form.name }}
+                    {% if form.name.errors %}
+                      <div class="text-danger">{{ form.name.errors }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="form-group row mb-4">
+                  <label for="{{ form.members.id_for_label }}" class="col-sm-2 col-form-label">
+                    <i class="feather icon-users text-primary mr-2"></i>Members*
+                  </label>
+                  <div class="col-sm-10">
+                    <select name="members" id="members-select" class="form-control selectpicker" multiple
+                            data-live-search="true">
+                      {% for member in form.fields.members.queryset %}
+                        <option value="{{ member.id }}"
+                                {% if form.initial.members and member in form.initial.members %}selected{% endif %}>
+                          {{ member.username }} ({{ member.first_name }} {{ member.last_name }})
+                        </option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-group row mb-4">
+                  <label for="{{ form.leader.id_for_label }}" class="col-sm-2 col-form-label">
+                    <i class="feather icon-user-check text-primary mr-2"></i>Team Leader*
+                  </label>
+                  <div class="col-sm-10">
+                    <select name="leader" id="leader-select" class="form-control">
+                      <option value="">Select leader</option>
+                      {% if form.initial.members %}
+                        {% for member in form.initial.members %}
+                          <option value="{{ member.id }}"
+                                  {% if form.initial.leader and member == form.initial.leader %}selected{% endif %}>
+                            {{ member.username }} ({{ member.first_name }} {{ member.last_name }})
+                          </option>
+                        {% endfor %}
+                      {% endif %}
+                    </select>
+                    {% if form.errors %}
+                      <div class="alert alert-danger">
+                        {{ form.errors }}
+                      </div>
+                    {% endif %}
+                    {% if form.leader.errors %}
+                      <div class="text-danger">{{ form.leader.errors }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="form-group row mb-4">
+                  <div class="col-sm-10 offset-sm-2">
+                    <button type="submit" class="btn btn-primary">
+                      <i class="feather icon-save mr-1"></i>{{ object|yesno:"Update,Create" }} Team
+                    </button>
+                    <a href="{% url 'taskManagerApp:project-list' %}" class="btn btn-secondary ml-2">
+                      <i class="feather icon-x mr-1"></i>Cancel
+                    </a>
+                  </div>
+                </div>
+
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+      document.addEventListener('DOMContentLoaded', function () {
+          const membersSelect = document.getElementById('members-select');
+          const leaderSelect = document.getElementById('leader-select');
+
+          function updateLeaderOptions() {
+              const selectedOptions = Array.from(membersSelect.selectedOptions).map(opt => ({
+                  id: opt.value,
+                  text: opt.textContent.trim()
+              }));
+
+              leaderSelect.innerHTML = '';
+              const placeholder = document.createElement('option');
+              placeholder.text = 'Select leader';
+              placeholder.value = '';
+              leaderSelect.appendChild(placeholder);
+
+              selectedOptions.forEach(member => {
+                  const option = document.createElement('option');
+                  option.value = member.id;
+                  option.textContent = member.text;
+                  leaderSelect.appendChild(option);
+              });
+          }
+
+          membersSelect.addEventListener('change', updateLeaderOptions);
+          // Якщо сторінка редагування, ініціалізуємо лідера відразу
+          updateLeaderOptions();
+      });
+  </script>
+{% endblock %}
