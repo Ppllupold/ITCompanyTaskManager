@@ -43,7 +43,7 @@
                             <i class="feather icon-users mr-2"></i> Members
                           </a>
                           <a class="dropdown-item"
-                             href="{% url 'taskmanager:task-create' %}?team_id={{ team.id }} ?project_id={{ project.id }}">
+                             href="{% url 'taskmanager:task-create' %}?team_id={{ team.id }}&project_id={{ project.id }}">
                             <i class="feather icon-bookmark mr-2"></i> Add task
                           </a>
                           <form method="post"

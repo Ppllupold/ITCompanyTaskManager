@@ -7,7 +7,7 @@ from django.urls import reverse_lazy
 from django.views import generic
 
 from taskmanagerApp.forms import WorkerSearchForm, CustomUserCreationForm, TaskSearchForm, ProjectForm, TeamForm, \
-    TaskForm
+    TaskForm, TaskAssignForm
 from taskmanagerApp.models import Task, Position, Worker, Project, Team
 
 
@@ -24,6 +24,10 @@ class TaskListView(LoginRequiredMixin, generic.ListView):
         queryset = Task.objects.filter(is_completed=False).select_related("task_type", "project")
         search_form = TaskSearchForm(self.request.GET)
         sort_param = self.request.GET.get("sort", "priority")
+        project_id = self.request.GET.get("project_id")
+
+        if project_id:
+            queryset = queryset.filter(project_id=project_id)
 
         if search_form.is_valid():
             name = search_form.cleaned_data.get("name")
@@ -53,24 +57,65 @@ class TaskListView(LoginRequiredMixin, generic.ListView):
         return context
 
 
-class TaskCreateView(LoginRequiredMixin, generic.edit.CreateView):
+class TaskCreateView(LoginRequiredMixin, generic.CreateView):
+    model = Task
+    form_class = TaskForm
+    template_name = "TMapp/task_form.html"
+    success_url = reverse_lazy("taskmanager:task-list")
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        project_id = self.request.GET.get('project_id')
+        team_id = self.request.GET.get('team_id')
+
+        if project_id:
+            project = Project.objects.get(pk=project_id)
+            kwargs['project'] = project
+
+        if team_id:
+            team = Team.objects.get(pk=team_id)
+            kwargs['team'] = team
+
+        return kwargs
+
+    def form_valid(self, form):
+        form.instance.project = getattr(self, 'project_instance', None)
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["project_id"] = self.request.GET.get("project_id") or self.kwargs.get("pk")
+        return context
+
+
+class TaskUpdateView(LoginRequiredMixin, generic.edit.UpdateView):
     model = Task
     template_name = "TMapp/task_form.html"
     form_class = TaskForm
 
     def get_success_url(self):
-        project_id = self.request.GET.get("project_id")
-        return reverse_lazy("taskManagerApp:project-teams", kwargs={"pk": project_id})
+        project_id = self.object.project.id
+        return reverse_lazy("taskmanager:project-teams", kwargs={"pk": project_id})
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        project_id = self.request.GET.get("project_id")
-        team_id = self.request.GET.get("team_id")
-        if project_id:
-            kwargs["project"] = Project.objects.get(pk=project_id)
-        if team_id:
-            kwargs["team"] = Team.objects.get(pk=team_id)
+        kwargs["is_update"] = True
         return kwargs
+
+
+class TaskAssignView(LoginRequiredMixin, generic.UpdateView):
+    model = Task
+    form_class = TaskAssignForm
+    template_name = "TMapp/task_assign.html"
+
+    def get_success_url(self):
+        return reverse_lazy("taskManagerApp:task-detail", kwargs={"pk": self.object.pk})
+
+    def form_valid(self, form):
+        task = get_object_or_404(Task, pk=self.kwargs["pk"])
+        assignees = form.cleaned_data["assignees"]
+        task.assignees.add(*assignees)
+        return redirect("taskManagerApp:task-detail", pk=task.pk)
 
 
 class PositionListView(LoginRequiredMixin, generic.ListView):

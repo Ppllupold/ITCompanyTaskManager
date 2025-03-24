@@ -66,22 +66,38 @@ class TaskForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        project = kwargs.pop('project')
-        team = kwargs.pop('team')
+        project = kwargs.pop('project', None)
+        team = kwargs.pop('team', None)
+        is_update = kwargs.pop("is_update", False)
+
         super().__init__(*args, **kwargs)
-        self.project_instance = project
 
-        if team:
+        if is_update:
+            self.fields.pop("assignees")
+
+        if team is not None and hasattr(team, "members"):
             self.fields["assignees"].queryset = team.members.all()
+        elif project is not None and hasattr(project, "teams"):
+            self.fields["assignees"].queryset = Worker.objects.filter(teams__in=project.teams.all()).distinct()
 
-    def save(self, commit=True):
-        task = super().save(commit=False)
-        if hasattr(self, 'project_instance'):
-            task.project = self.project_instance
-        if commit:
-            task.save()
-            self.save_m2m()
-        return task
+        if self.instance and self.instance.deadline:
+            self.initial["deadline"] = self.instance.deadline.strftime("%Y-%m-%dT%H:%M")
+
+
+class TaskAssignForm(forms.ModelForm):
+    class Meta:
+        model = Task
+        fields = ["assignees"]
+        widgets = {
+            "assignees": forms.SelectMultiple(attrs={"class": "form-control selectpicker", "data-live-search": "true"}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.project:
+            self.fields["assignees"].queryset = Worker.objects.filter(
+                teams__in=self.instance.project.teams.all()
+            ).distinct()
 
 
 class CustomUserCreationForm(UserCreationForm):
