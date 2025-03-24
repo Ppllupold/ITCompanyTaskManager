@@ -24,8 +24,12 @@
             Enter Search Field:
           </label>
           {{ searchForm|crispy }}
-          <button type="submit" class="btn btn-primary">🔍 Search</button>
-          <a href="{% url 'taskmanager:worker-list' %}" class="btn btn-dark">Clear</a>
+          <button type="submit" class="btn btn-success">
+            <i class="feather icon-search mr-1"></i> Search
+          </button>
+          <a href="{% url 'taskmanager:worker-list' %}" class="btn btn-outline-secondary">
+            <i class="feather icon-x-circle mr-1"></i> Clear
+          </a>
         </form>
 
 
@@ -53,7 +57,7 @@
             </tr>
             </thead>
             <tbody>
-            {% for worker in worker_list %}
+            {% for worker in worker_list|dictsort:"username"%}
               <tr class="align-middle">
                 <td><a href="{% url "taskmanager:worker-detail" worker.id %}">
                   {{ worker.username }}
