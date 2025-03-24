@@ -2,11 +2,12 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count, Q
 from django.db.models.functions import Lower
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views import generic
 
-from taskmanagerApp.forms import WorkerSearchForm, CustomUserCreationForm, TaskSearchForm, ProjectForm, TeamForm
+from taskmanagerApp.forms import WorkerSearchForm, CustomUserCreationForm, TaskSearchForm, ProjectForm, TeamForm, \
+    TaskForm
 from taskmanagerApp.models import Task, Position, Worker, Project, Team
 
 
@@ -23,6 +24,10 @@ class TaskListView(LoginRequiredMixin, generic.ListView):
         queryset = Task.objects.filter(is_completed=False).select_related("task_type", "project")
         search_form = TaskSearchForm(self.request.GET)
         sort_param = self.request.GET.get("sort", "priority")
+        project_id = self.request.GET.get("project_id")\
+
+        if project_id:
+            queryset = queryset.filter(project_id=project_id)
 
         if search_form.is_valid():
             search_field = search_form.cleaned_data["search_field"]
@@ -32,6 +37,8 @@ class TaskListView(LoginRequiredMixin, generic.ListView):
                 queryset = queryset.filter(name__icontains=search_value)
             elif search_field == "project_name":
                 queryset = queryset.filter(project__name__icontains=search_value)
+            elif search_field == "task_type":
+                queryset = queryset.filter(task_type__name__icontains=search_value)
 
         if sort_param == "task_type":
             return queryset.order_by("task_type__name")
@@ -41,6 +48,26 @@ class TaskListView(LoginRequiredMixin, generic.ListView):
         context = super().get_context_data(**kwargs)
         context["search_form"] = TaskSearchForm(self.request.GET)
         return context
+
+
+class TaskCreateView(LoginRequiredMixin, generic.edit.CreateView):
+    model = Task
+    template_name = "TMapp/task_form.html"
+    form_class = TaskForm
+
+    def get_success_url(self):
+        project_id = self.request.GET.get("project_id")
+        return reverse_lazy("taskManagerApp:project-teams", kwargs={"pk": project_id})
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        project_id = self.request.GET.get("project_id")
+        team_id = self.request.GET.get("team_id")
+        if project_id:
+            kwargs["project"] = Project.objects.get(pk=project_id)
+        if team_id:
+            kwargs["team"] = Team.objects.get(pk=team_id)
+        return kwargs
 
 
 class PositionListView(LoginRequiredMixin, generic.ListView):
@@ -69,6 +96,10 @@ class WorkerListView(LoginRequiredMixin, generic.ListView):
             select_related("position").
             prefetch_related("assigned_tasks", "teams")
         )
+        team_id = self.request.GET.get("team_id")
+        if team_id:
+            queryset = queryset.filter(teams__id=team_id).distinct()
+
         search_form = WorkerSearchForm(self.request.GET)
         sort_param = self.request.GET.get("sort")
         if search_form.is_valid():
@@ -183,6 +214,14 @@ class TeamCreateView(LoginRequiredMixin, generic.CreateView):
         if project_id:
             return reverse_lazy("taskmanager:project-teams", kwargs={"pk": project_id})
         return reverse_lazy("taskmanager:project-list")
+
+
+def remove_team_from_project(request, project_id, team_id):
+    project = get_object_or_404(Project, pk=project_id)
+    team = get_object_or_404(Team, pk=team_id)
+    if request.method == "POST":
+        project.teams.remove(team)
+    return redirect("taskmanager:project-teams", pk=project_id)
 
 
 class RegisterView(generic.CreateView):

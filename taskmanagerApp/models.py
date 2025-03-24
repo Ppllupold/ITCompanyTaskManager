@@ -25,7 +25,7 @@ class Worker(AbstractUser):
         verbose_name_plural = "drivers"
 
     def __str__(self):
-        return f"{self.username} ({self.first_name} {self.last_name})"
+        return f"{self.username} ({self.position.name})"
 
 
 class TaskType(models.Model):

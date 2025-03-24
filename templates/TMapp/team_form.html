@@ -49,7 +49,7 @@
                       {% for member in form.fields.members.queryset %}
                         <option value="{{ member.id }}"
                                 {% if form.initial.members and member in form.initial.members %}selected{% endif %}>
-                          {{ member.username }} ({{ member.first_name }} {{ member.last_name }})
+                            {{ member.username }} ({{ member.position.name }})
                         </option>
                       {% endfor %}
                     </select>
@@ -62,16 +62,18 @@
                   </label>
                   <div class="col-sm-10">
                     <select name="leader" id="leader-select" class="form-control">
-                      <option value="">Select leader</option>
-                      {% if form.initial.members %}
+                      {% if form.initial.leader %}
                         {% for member in form.initial.members %}
                           <option value="{{ member.id }}"
-                                  {% if form.initial.leader and member == form.initial.leader %}selected{% endif %}>
-                            {{ member.username }} ({{ member.first_name }} {{ member.last_name }})
+                                  {% if member == form.initial.leader %}selected{% endif %}>
+                            {{ member.username }} ({{ member.position.name }})
                           </option>
                         {% endfor %}
+                      {% else %}
+                        <option value="">--- Choose Leader ---</option>
                       {% endif %}
                     </select>
+
                     {% if form.errors %}
                       <div class="alert alert-danger">
                         {{ form.errors }}
@@ -113,22 +115,29 @@
                   text: opt.textContent.trim()
               }));
 
+              const oldLeader = leaderSelect.value;
               leaderSelect.innerHTML = '';
-              const placeholder = document.createElement('option');
-              placeholder.text = 'Select leader';
-              placeholder.value = '';
-              leaderSelect.appendChild(placeholder);
+
+
+              if (!oldLeader) {
+                  const placeholder = document.createElement('option');
+                  placeholder.textContent = 'Choose leader';
+                  placeholder.value = '';
+                  leaderSelect.appendChild(placeholder);
+              }
 
               selectedOptions.forEach(member => {
                   const option = document.createElement('option');
                   option.value = member.id;
                   option.textContent = member.text;
+                  if (member.id === oldLeader) {
+                      option.selected = true;
+                  }
                   leaderSelect.appendChild(option);
               });
           }
 
           membersSelect.addEventListener('change', updateLeaderOptions);
-          // Якщо сторінка редагування, ініціалізуємо лідера відразу
           updateLeaderOptions();
       });
   </script>

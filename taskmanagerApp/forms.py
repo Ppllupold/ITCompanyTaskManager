@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
-from taskmanagerApp.models import Worker, Position, Project, Team
+from taskmanagerApp.models import Worker, Position, Project, Team, Task
 
 
 class WorkerSearchForm(forms.Form):
@@ -28,6 +28,7 @@ class TaskSearchForm(forms.Form):
     SEARCH_CHOICES = [
         ("task_name", "Task Name"),
         ("project_name", "Project Name"),
+        ("task_type", "Task type"),
     ]
 
     search_field = forms.ChoiceField(
@@ -42,6 +43,39 @@ class TaskSearchForm(forms.Form):
         widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Enter search value"}),
         label=""
     )
+
+
+class TaskForm(forms.ModelForm):
+    class Meta:
+        model = Task
+        fields = ["name", "description", "deadline", "priority", "task_type", "assignees"]
+        widgets = {
+            "name": forms.TextInput(attrs={"class": "form-control", "placeholder": "Enter task name"}),
+            "description": forms.Textarea(
+                attrs={"class": "form-control", "rows": 3, "placeholder": "Enter task description"}),
+            "deadline": forms.DateTimeInput(attrs={"class": "form-control", "type": "datetime-local"}),
+            "priority": forms.Select(attrs={"class": "form-select"}),
+            "task_type": forms.Select(attrs={"class": "form-select"}),
+            "assignees": forms.SelectMultiple(attrs={"class": "form-control selectpicker", "data-live-search": "true"}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        project = kwargs.pop('project')
+        team = kwargs.pop('team')
+        super().__init__(*args, **kwargs)
+        self.project_instance = project
+
+        if team:
+            self.fields["assignees"].queryset = team.members.all()
+
+    def save(self, commit=True):
+        task = super().save(commit=False)
+        if hasattr(self, 'project_instance'):
+            task.project = self.project_instance
+        if commit:
+            task.save()
+            self.save_m2m()
+        return task
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -107,5 +141,4 @@ class TeamForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if self.instance and self.instance.leader:
-            self.initial["leader"] = self.instance.leader
+        self.fields["members"].queryset = self.fields["members"].queryset.order_by("position__name")

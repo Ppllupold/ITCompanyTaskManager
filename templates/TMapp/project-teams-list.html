@@ -10,14 +10,17 @@
         <div class="page-header d-flex justify-content-between align-items-center">
           <div class="page-block">
             <h3 class="m-b-10">Teams for {{ project.name }}</h3>
-          </div>
-          <div>
+            <a href="{% url 'taskmanager:task-list' %}?project_id={{ project.id }}"
+               class="btn btn-outline-primary btn-sm mt-2">
+              <i class="feather icon-list mr-1"></i> View Project Tasks
+            </a>
             <a href="{% url 'taskManagerApp:team-create' %}?project_id={{ project.id }}"
-               class="btn btn-outline-secondary">
+               class="btn btn-outline-secondary btn-sm mt-2 m-l-5">
               <i class="feather icon-plus mr-1"></i> Create new Team
             </a>
           </div>
         </div>
+
 
         {% if project.teams.all %}
           <div class="row">
@@ -33,15 +36,25 @@
                           <i class="feather icon-more-vertical"></i>
                         </button>
                         <div class="dropdown-menu dropdown-menu-right shadow-sm">
-                          <a class="dropdown-item disabled" href="#">
-                            <i class="feather icon-eye mr-2"></i> View Members
-                          </a>
                           <a class="dropdown-item" href="{% url 'taskmanager:team-update' pk=team.id %}">
                             <i class="feather icon-edit mr-2"></i> Edit Team
                           </a>
-                          <a class="dropdown-item text-danger disabled" href="#">
-                            <i class="feather icon-trash-2 mr-2"></i> Remove from Project
+                          <a class="dropdown-item" href="{% url 'taskmanager:worker-list' %}?team_id={{ team.id }}">
+                            <i class="feather icon-users mr-2"></i> Members
                           </a>
+                          <a class="dropdown-item"
+                             href="{% url 'taskmanager:task-create' %}?team_id={{ team.id }} ?project_id={{ project.id }}">
+                            <i class="feather icon-bookmark mr-2"></i> Add task
+                          </a>
+                          <form method="post"
+                                action="{% url 'taskManagerApp:remove-team-from-project' project.id team.id %}"
+                                style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="dropdown-item text-danger"
+                                    onclick="return confirm('Are you sure you want to remove this team from the project?');">
+                              <i class="feather icon-trash-2 mr-2"></i> Remove from Project
+                            </button>
+                          </form>
                         </div>
                       </div>
                     </div>
@@ -54,9 +67,6 @@
                         <strong>{{ team.leader.get_full_name|default:team.leader.username }}</strong>
                       </p>
                     {% endif %}
-                    <a href="#" class="btn btn-outline-primary btn-sm mt-auto disabled" aria-disabled="true">
-                      <i class="feather icon-eye mr-1"></i> View details
-                    </a>
                   </div>
                 </div>
               </div>

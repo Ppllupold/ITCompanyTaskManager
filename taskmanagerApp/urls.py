@@ -2,13 +2,14 @@ from django.urls import path
 
 from taskmanagerApp.views import index, PositionListView, WorkerListView, WorkerDetailView, TaskDetailView, \
     RegisterView, WorkerDeleteView, ProjectListView, ProjectCreateView, ProjectDeleteView, ProjectDetailView, \
-    ProjectUpdateView, ProjectTeamsView, TeamUpdateView, TeamCreateView
+    ProjectUpdateView, ProjectTeamsView, TeamUpdateView, TeamCreateView, remove_team_from_project, TaskCreateView
 from .views import TaskListView
 
 urlpatterns = [
     path("", index, name='index'),
     path("register/", RegisterView.as_view(), name="register"),
     path("tasks/", TaskListView.as_view(), name="task-list"),
+    path("tasks/create/", TaskCreateView.as_view(), name="task-create"),
     path("positions/", PositionListView.as_view(), name="position-list"),
     path("workers/", WorkerListView.as_view(), name="worker-list"),
     path("workers/<int:pk>/", WorkerDetailView.as_view(), name="worker-detail"),
@@ -22,5 +23,8 @@ urlpatterns = [
     path("projects/<int:pk>/teams/", ProjectTeamsView.as_view(), name="project-teams"),
     path("teams/<int:pk>/update/", TeamUpdateView.as_view(), name="team-update"),
     path("teams/create/", TeamCreateView.as_view(), name="team-create"),
+    path("projects/<int:project_id>/teams/<int:team_id>/remove/", remove_team_from_project,
+         name="remove-team-from-project"),
+
 ]
 app_name = "taskManagerApp"
