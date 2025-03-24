@@ -16,16 +16,38 @@
           Task List</h1>
 
 
-        <form method="get" class="mb-4" style="max-width: 300px;">
-          <label style="font-weight: bold; font-size: 1rem; color: #333; margin-top: 10px;
-           background: navajowhite;
-           padding: 6px 12px; border-radius: 8px;
-            display: inline-block; margin-bottom: 8px;">
-            Enter Search Field:
-          </label>
-          {{ search_form|crispy }}
-          <button type="submit" class="btn btn-primary">🔍 Search</button>
-          <a href="{% url 'taskmanager:task-list' %}" class="btn btn-dark">Clear</a>
+        <form method="get" class="mb-4 p-3 shadow rounded bg-light" style="max-width: 100%;">
+          <h4 class="mb-3 text-primary">🔎 filter tasks</h4>
+          <div class="row g-3">
+            <div class="col-md-3">
+              <div class="form-group">
+                {{ search_form.name|as_crispy_field }}
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                {{ search_form.project_name|as_crispy_field }}
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="form-group">
+                {{ search_form.task_type|as_crispy_field }}
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="form-group">
+                {{ search_form.priority|as_crispy_field }}
+              </div>
+            </div>
+            <div class="d-flex gap-2 mt-3">
+              <button type="submit" class="btn btn-success">
+                <i class="feather icon-search mr-1"></i> Search
+              </button>
+              <a href="{% url 'taskmanager:task-list' %}" class="btn btn-outline-secondary">
+                <i class="feather icon-x-circle mr-1"></i> Clear
+              </a>
+            </div>
+          </div>
         </form>
 
 

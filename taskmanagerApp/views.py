@@ -24,25 +24,28 @@ class TaskListView(LoginRequiredMixin, generic.ListView):
         queryset = Task.objects.filter(is_completed=False).select_related("task_type", "project")
         search_form = TaskSearchForm(self.request.GET)
         sort_param = self.request.GET.get("sort", "priority")
-        project_id = self.request.GET.get("project_id")\
-
-        if project_id:
-            queryset = queryset.filter(project_id=project_id)
 
         if search_form.is_valid():
-            search_field = search_form.cleaned_data["search_field"]
-            search_value = search_form.cleaned_data["search_value"]
+            name = search_form.cleaned_data.get("name")
+            project_name = search_form.cleaned_data.get("project_name")
+            task_type = search_form.cleaned_data.get("task_type")
+            priority = search_form.cleaned_data.get("priority")
 
-            if search_field == "task_name":
-                queryset = queryset.filter(name__icontains=search_value)
-            elif search_field == "project_name":
-                queryset = queryset.filter(project__name__icontains=search_value)
-            elif search_field == "task_type":
-                queryset = queryset.filter(task_type__name__icontains=search_value)
+            if name:
+                queryset = queryset.filter(name__icontains=name)
+            if project_name:
+                queryset = queryset.filter(project__name__icontains=project_name)
+            if task_type:
+                queryset = queryset.filter(task_type__name__icontains=task_type)
+            if priority:
+                queryset = queryset.filter(priority=priority)
 
         if sort_param == "task_type":
-            return queryset.order_by("task_type__name")
-        return queryset.order_by("priority")
+            queryset = queryset.order_by("task_type__name")
+        else:
+            queryset = queryset.order_by("priority")
+
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

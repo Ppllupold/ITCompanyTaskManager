@@ -25,23 +25,29 @@ class WorkerSearchForm(forms.Form):
 
 
 class TaskSearchForm(forms.Form):
-    SEARCH_CHOICES = [
-        ("task_name", "Task Name"),
-        ("project_name", "Project Name"),
-        ("task_type", "Task type"),
-    ]
-
-    search_field = forms.ChoiceField(
-        choices=SEARCH_CHOICES,
+    name = forms.CharField(
         required=False,
-        widget=forms.Select(attrs={"class": "form-select"}),
-        label=""
+        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Task name"}),
+        label="Task Name"
     )
 
-    search_value = forms.CharField(
+    project_name = forms.CharField(
         required=False,
-        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Enter search value"}),
-        label=""
+        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Project name"}),
+        label="Project Name"
+    )
+
+    task_type = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Task type"}),
+        label="Task Type"
+    )
+
+    priority = forms.ChoiceField(
+        required=False,
+        choices=[('', 'All priorities')] + list(Task._meta.get_field('priority').choices),
+        widget=forms.Select(attrs={'class': 'form-select'}),
+        label="Priority"
     )
 
 
