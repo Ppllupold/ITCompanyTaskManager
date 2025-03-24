@@ -67,24 +67,21 @@ class TaskCreateView(LoginRequiredMixin, generic.CreateView):
         kwargs = super().get_form_kwargs()
         project_id = self.request.GET.get('project_id')
         team_id = self.request.GET.get('team_id')
-
         if project_id:
-            project = Project.objects.get(pk=project_id)
-            kwargs['project'] = project
-
+            kwargs['project'] = Project.objects.get(pk=project_id)
         if team_id:
-            team = Team.objects.get(pk=team_id)
-            kwargs['team'] = team
-
+            kwargs['team'] = Team.objects.get(pk=team_id)
         return kwargs
 
     def form_valid(self, form):
-        form.instance.project = getattr(self, 'project_instance', None)
+        project_id = self.request.GET.get('project_id')
+        if project_id:
+            form.instance.project = Project.objects.get(pk=project_id)
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["project_id"] = self.request.GET.get("project_id") or self.kwargs.get("pk")
+        context["project_id"] = self.request.GET.get("project_id")
         return context
 
 
@@ -101,6 +98,11 @@ class TaskUpdateView(LoginRequiredMixin, generic.edit.UpdateView):
         kwargs = super().get_form_kwargs()
         kwargs["is_update"] = True
         return kwargs
+
+
+class TaskDeleteView(LoginRequiredMixin, generic.DeleteView):
+    model = Task
+    success_url = reverse_lazy("taskmanager:task-list")
 
 
 class TaskAssignView(LoginRequiredMixin, generic.UpdateView):
