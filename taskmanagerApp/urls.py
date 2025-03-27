@@ -1,22 +1,23 @@
 from django.urls import path
 
-from taskmanagerApp.views import index, PositionListView, WorkerListView, WorkerDetailView, TaskDetailView, \
+from taskmanagerApp.views import PositionListView, WorkerListView, WorkerDetailView, TaskDetailView, \
     RegisterView, WorkerDeleteView, ProjectListView, ProjectCreateView, ProjectDeleteView, ProjectDetailView, \
     ProjectUpdateView, ProjectTeamsView, TeamUpdateView, TeamCreateView, remove_team_from_project, TaskCreateView, \
-    TaskUpdateView, TaskAssignView, TaskDeleteView
-from .views import TaskListView
+    TaskUpdateView, TaskAssignView, TaskDeleteView, IndexView, mark_task_completed, TaskListView, WorkerUpdateView
 
 urlpatterns = [
-    path("", index, name='index'),
+    path("", IndexView.as_view(), name='index'),
     path("register/", RegisterView.as_view(), name="register"),
     path("tasks/", TaskListView.as_view(), name="task-list"),
     path("tasks/create/", TaskCreateView.as_view(), name="task-create"),
     path("tasks/<int:pk>/update/", TaskUpdateView.as_view(), name="task-update"),
     path("tasks/<int:pk>/delete/", TaskDeleteView.as_view(), name="task-delete"),
     path("tasks/<int:pk>/assign/", TaskAssignView.as_view(), name="task-assign"),
+    path("tasks/<int:pk>/complete/", mark_task_completed, name="task-complete"),
     path("positions/", PositionListView.as_view(), name="position-list"),
     path("workers/", WorkerListView.as_view(), name="worker-list"),
     path("workers/<int:pk>/", WorkerDetailView.as_view(), name="worker-detail"),
+    path("workers/<int:pk>/update", WorkerUpdateView.as_view(), name="worker-update"),
     path("workers/<int:pk>/delete/", WorkerDeleteView.as_view(), name="worker-delete"),
     path("tasks/<int:pk>/", TaskDetailView.as_view(), name="task-detail"),
     path("projects/", ProjectListView.as_view(), name="project-list"),

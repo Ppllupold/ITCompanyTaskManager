@@ -1,19 +1,31 @@
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count, Q
 from django.db.models.functions import Lower
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
-from django.views import generic
+from django.views import generic, View
 
 from taskmanagerApp.forms import WorkerSearchForm, CustomUserCreationForm, TaskSearchForm, ProjectForm, TeamForm, \
     TaskForm, TaskAssignForm
 from taskmanagerApp.models import Task, Position, Worker, Project, Team
 
 
-@login_required(login_url='login')
-def index(request):
-    return render(request, "home/index.html")
+class IndexView(LoginRequiredMixin, View):
+    def get(self, request):
+        top_workers = get_user_model().objects.annotate(
+            completed_tasks=Count("assigned_tasks", filter=Q(assigned_tasks__is_completed=True))) \
+                          .order_by("-completed_tasks")[:3]
+
+        my_tasks = Task.objects.filter(assignees=request.user, is_completed=False)
+
+        context = {
+            "top_workers": top_workers,
+            "my_tasks": my_tasks,
+            "user_profile": request.user,
+        }
+        return render(request, "home/index.html", context)
 
 
 class TaskListView(LoginRequiredMixin, generic.ListView):
@@ -21,10 +33,16 @@ class TaskListView(LoginRequiredMixin, generic.ListView):
     template_name = "TMapp/task-list.html"
 
     def get_queryset(self):
-        queryset = Task.objects.filter(is_completed=False).select_related("task_type", "project")
         search_form = TaskSearchForm(self.request.GET)
         sort_param = self.request.GET.get("sort", "priority")
         project_id = self.request.GET.get("project_id")
+
+        if sort_param == "completed":
+            queryset = Task.objects.filter(is_completed=True)
+        else:
+            queryset = Task.objects.filter(is_completed=False)
+
+        queryset = queryset.select_related("task_type", "project")
 
         if project_id:
             queryset = queryset.filter(project_id=project_id)
@@ -134,15 +152,15 @@ class PositionListView(LoginRequiredMixin, generic.ListView):
 
 
 class WorkerListView(LoginRequiredMixin, generic.ListView):
-    model = Worker
+    model = get_user_model()
     template_name = "TMapp/worker-list.html"
 
     def get_queryset(self):
 
         queryset = (
-            Worker.objects.annotate(task_count=Count("assigned_tasks",
-                                                     filter=Q(assigned_tasks__is_completed=False)),
-                                    team_count=Count("teams")).
+            get_user_model().objects.annotate(task_count=Count("assigned_tasks",
+                                                               filter=Q(assigned_tasks__is_completed=False)),
+                                              team_count=Count("teams")).
             select_related("position").
             prefetch_related("assigned_tasks", "teams")
         )
@@ -180,17 +198,37 @@ class TaskDetailView(LoginRequiredMixin, generic.DetailView):
     template_name = "TMapp/task-detail.html"
 
 
+@login_required
+def mark_task_completed(request, pk):
+    task = get_object_or_404(Task, pk=pk)
+    task.is_completed = True
+    task.save()
+    return redirect("taskManagerApp:task-detail", pk=task.pk)
+
+
 class WorkerDetailView(LoginRequiredMixin, generic.DetailView):
-    model = Worker
+    model = get_user_model()
     template_name = "TMapp/worker-detail.html"
-    queryset = Worker.objects.annotate(
+    queryset = get_user_model().objects.annotate(
         task_count=Count("assigned_tasks"),
         team_count=Count("teams"),
     ).select_related("position").prefetch_related("assigned_tasks", "teams")
 
 
+class WorkerUpdateView(LoginRequiredMixin, generic.UpdateView):
+    model = get_user_model()
+    fields = ["position", "username", "first_name", "last_name", "email"]
+    template_name = "TMapp/worker-update.html"
+    success_url = reverse_lazy("taskmanager:index")
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields["username"].help_text = None
+        return form
+
+
 class WorkerDeleteView(LoginRequiredMixin, generic.DeleteView):
-    model = Worker
+    model = get_user_model()
     template_name = "TMapp/worker_confirm_delete.html"
     success_url = reverse_lazy("taskManagerApp:index")
 
@@ -275,7 +313,7 @@ def remove_team_from_project(request, project_id, team_id):
 
 
 class RegisterView(generic.CreateView):
-    model = Worker
+    model = get_user_model()
     template_name = "registration/register.html"
     form_class = CustomUserCreationForm
     success_url = reverse_lazy("login")
