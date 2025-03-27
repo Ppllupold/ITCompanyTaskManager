@@ -49,7 +49,7 @@
                       {% for member in form.fields.members.queryset %}
                         <option value="{{ member.id }}"
                                 {% if form.initial.members and member in form.initial.members %}selected{% endif %}>
-                            {{ member.username }} ({{ member.position.name }})
+                          {{ member.username }} ({{ member.position.name }})
                         </option>
                       {% endfor %}
                     </select>
@@ -93,6 +93,11 @@
                     <a href="{% url 'taskManagerApp:project-list' %}" class="btn btn-secondary ml-2">
                       <i class="feather icon-x mr-1"></i>Cancel
                     </a>
+                    {% if object.pk %}
+                      <a href="{% url 'taskManagerApp:team-delete' pk=object.pk %}" class="btn btn-danger ml-2">
+                        <i class="feather icon-trash mr-1"></i>Delete
+                      </a>
+                    {% endif %}
                   </div>
                 </div>
 

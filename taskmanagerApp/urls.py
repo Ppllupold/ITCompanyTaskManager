@@ -3,7 +3,8 @@ from django.urls import path
 from taskmanagerApp.views import PositionListView, WorkerListView, WorkerDetailView, TaskDetailView, \
     RegisterView, WorkerDeleteView, ProjectListView, ProjectCreateView, ProjectDeleteView, ProjectDetailView, \
     ProjectUpdateView, ProjectTeamsView, TeamUpdateView, TeamCreateView, remove_team_from_project, TaskCreateView, \
-    TaskUpdateView, TaskAssignView, TaskDeleteView, IndexView, mark_task_completed, TaskListView, WorkerUpdateView
+    TaskUpdateView, TaskAssignView, TaskDeleteView, IndexView, mark_task_completed, TaskListView, WorkerUpdateView, \
+    TeamDeleteView
 
 urlpatterns = [
     path("", IndexView.as_view(), name='index'),
@@ -27,6 +28,7 @@ urlpatterns = [
     path("projects/<int:pk>/update/", ProjectUpdateView.as_view(), name="project-update"),
     path("projects/<int:pk>/teams/", ProjectTeamsView.as_view(), name="project-teams"),
     path("teams/<int:pk>/update/", TeamUpdateView.as_view(), name="team-update"),
+    path("teams/<int:pk>/delete/", TeamDeleteView.as_view(), name="team-delete"),
     path("teams/create/", TeamCreateView.as_view(), name="team-create"),
     path("projects/<int:project_id>/teams/<int:team_id>/remove/", remove_team_from_project,
          name="remove-team-from-project"),

@@ -9,7 +9,7 @@ from django.views import generic, View
 
 from taskmanagerApp.forms import WorkerSearchForm, CustomUserCreationForm, TaskSearchForm, ProjectForm, TeamForm, \
     TaskForm, TaskAssignForm
-from taskmanagerApp.models import Task, Position, Worker, Project, Team
+from taskmanagerApp.models import Task, Position, Project, Team
 
 
 class IndexView(LoginRequiredMixin, View):
@@ -310,6 +310,12 @@ def remove_team_from_project(request, project_id, team_id):
     if request.method == "POST":
         project.teams.remove(team)
     return redirect("taskmanager:project-teams", pk=project_id)
+
+
+class TeamDeleteView(LoginRequiredMixin, generic.DeleteView):
+    model = Team
+    template_name = "TMapp/team_confirm_delete.html"
+    success_url = reverse_lazy("taskManagerApp:project-list")
 
 
 class RegisterView(generic.CreateView):
