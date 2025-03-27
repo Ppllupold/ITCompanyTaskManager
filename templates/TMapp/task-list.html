@@ -60,6 +60,10 @@
              class="btn {% if request.GET.sort == 'task_type' %}btn-secondary{% else %}btn-primary{% endif %}">
             Sort by type
           </a>
+          <a href="?sort=completed&q={{ request.GET.searchFor }}"
+             class="btn {% if request.GET.sort == 'task_type' %}btn-secondary{% else %}btn-primary{% endif %}">
+            See completed tasks
+          </a>
         </div>
 
 
