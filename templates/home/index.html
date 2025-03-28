@@ -46,7 +46,7 @@
               </div>
               <div class="card-body">
                 {% for worker in top_workers %}
-                  <p><strong>{{ worker.username }}</strong> — {{ worker.task_count }} completed
+                  <p><strong>{{ worker.username }}</strong> — {{ worker.completed_tasks }} completed
                     task{{ worker.task_count|pluralize }}</p>
                 {% empty %}
                   <p class="text-muted">No completed tasks yet.</p>
@@ -61,9 +61,9 @@
                 <i class="feather icon-list mr-2"></i> Tasks Assigned to You
               </div>
               <div class="card-body">
-                {% if assigned_tasks %}
+                {% if my_tasks %}
                   <ul class="list-group list-group-flush">
-                    {% for task in assigned_tasks %}
+                    {% for task in my_tasks %}
                       <li class="list-group-item">
                         <a href="{% url 'taskManagerApp:task-detail' task.id %}">{{ task.name }}</a>
                       </li>

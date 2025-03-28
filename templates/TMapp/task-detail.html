@@ -30,7 +30,7 @@
           <p class="detail-info"><strong>Assignees:</strong>
             {% if task.assignees.all %}
               {% for assignee in task.assignees.all %}
-                {{ assignee.get_full_name|default:assignee.username }}{% if not forloop.last %}, {% endif %}
+                {{ assignee.username }}{% if not forloop.last %}, {% endif %}
               {% endfor %}
             {% else %}
               <span class="text-muted">No assignees</span>
