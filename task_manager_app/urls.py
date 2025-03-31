@@ -1,6 +1,6 @@
 from django.urls import path
 
-from taskmanagerApp.views import PositionListView, WorkerListView, WorkerDetailView, TaskDetailView, \
+from task_manager_app.views import PositionListView, WorkerListView, WorkerDetailView, TaskDetailView, \
     RegisterView, WorkerDeleteView, ProjectListView, ProjectCreateView, ProjectDeleteView, ProjectDetailView, \
     ProjectUpdateView, ProjectTeamsView, TeamUpdateView, TeamCreateView, remove_team_from_project, TaskCreateView, \
     TaskUpdateView, TaskAssignView, TaskDeleteView, IndexView, mark_task_completed, TaskListView, WorkerUpdateView, \

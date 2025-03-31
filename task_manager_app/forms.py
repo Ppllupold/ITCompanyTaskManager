@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
-from taskmanagerApp.models import Worker, Position, Project, Team, Task
+from task_manager_app.models import Worker, Position, Project, Team, Task
 
 
 class WorkerSearchForm(forms.Form):
@@ -164,3 +164,5 @@ class TeamForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["members"].queryset = self.fields["members"].queryset.order_by("position__name")
+
+

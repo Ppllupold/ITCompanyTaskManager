@@ -7,9 +7,9 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views import generic, View
 
-from taskmanagerApp.forms import WorkerSearchForm, CustomUserCreationForm, TaskSearchForm, ProjectForm, TeamForm, \
+from task_manager_app.forms import WorkerSearchForm, CustomUserCreationForm, TaskSearchForm, ProjectForm, TeamForm, \
     TaskForm, TaskAssignForm
-from taskmanagerApp.models import Task, Position, Project, Team
+from task_manager_app.models import Task, Position, Project, Team
 
 
 class IndexView(LoginRequiredMixin, View):
