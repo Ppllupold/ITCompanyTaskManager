@@ -2,8 +2,8 @@ from django.urls import path
 
 from task_manager_app.views import PositionListView, WorkerListView, WorkerDetailView, TaskDetailView, \
     RegisterView, WorkerDeleteView, ProjectListView, ProjectCreateView, ProjectDeleteView, ProjectDetailView, \
-    ProjectUpdateView, ProjectTeamsView, TeamUpdateView, TeamCreateView, remove_team_from_project, TaskCreateView, \
-    TaskUpdateView, TaskAssignView, TaskDeleteView, IndexView, mark_task_completed, TaskListView, WorkerUpdateView, \
+    ProjectUpdateView, ProjectTeamsView, TeamUpdateView, TeamCreateView, RemoveTeamFromProjectView, TaskCreateView, \
+    TaskUpdateView, TaskAssignView, TaskDeleteView, IndexView, MarkTaskCompletedView, TaskListView, WorkerUpdateView, \
     TeamDeleteView
 
 urlpatterns = [
@@ -14,7 +14,7 @@ urlpatterns = [
     path("tasks/<int:pk>/update/", TaskUpdateView.as_view(), name="task-update"),
     path("tasks/<int:pk>/delete/", TaskDeleteView.as_view(), name="task-delete"),
     path("tasks/<int:pk>/assign/", TaskAssignView.as_view(), name="task-assign"),
-    path("tasks/<int:pk>/complete/", mark_task_completed, name="task-complete"),
+    path("tasks/<int:pk>/complete/", MarkTaskCompletedView.as_view(), name="task-complete"),
     path("positions/", PositionListView.as_view(), name="position-list"),
     path("workers/", WorkerListView.as_view(), name="worker-list"),
     path("workers/<int:pk>/", WorkerDetailView.as_view(), name="worker-detail"),
@@ -30,7 +30,7 @@ urlpatterns = [
     path("teams/<int:pk>/update/", TeamUpdateView.as_view(), name="team-update"),
     path("teams/<int:pk>/delete/", TeamDeleteView.as_view(), name="team-delete"),
     path("teams/create/", TeamCreateView.as_view(), name="team-create"),
-    path("projects/<int:project_id>/teams/<int:team_id>/remove/", remove_team_from_project,
+    path("projects/<int:project_id>/teams/<int:team_id>/remove/", RemoveTeamFromProjectView.as_view(),
          name="remove-team-from-project"),
 
 ]

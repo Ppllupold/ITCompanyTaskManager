@@ -209,12 +209,12 @@ class TaskDetailView(LoginRequiredMixin, generic.DetailView):
     template_name = "TMapp/task-detail.html"
 
 
-@login_required
-def mark_task_completed(request, pk):
-    task = get_object_or_404(Task, pk=pk)
-    task.is_completed = True
-    task.save()
-    return redirect("taskManagerApp:task-detail", pk=task.pk)
+class MarkTaskCompletedView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        task = get_object_or_404(Task, pk=pk)
+        task.is_completed = True
+        task.save()
+        return redirect("taskManagerApp:task-detail", pk=task.pk)
 
 
 class WorkerDetailView(LoginRequiredMixin, generic.DetailView):
@@ -315,12 +315,12 @@ class TeamCreateView(LoginRequiredMixin, generic.CreateView):
         return reverse_lazy("taskmanager:project-list")
 
 
-def remove_team_from_project(request, project_id, team_id):
-    project = get_object_or_404(Project, pk=project_id)
-    team = get_object_or_404(Team, pk=team_id)
-    if request.method == "POST":
+class RemoveTeamFromProjectView(LoginRequiredMixin, View):
+    def post(self, request, project_id, team_id):
+        project = get_object_or_404(Project, pk=project_id)
+        team = get_object_or_404(Team, pk=team_id)
         project.teams.remove(team)
-    return redirect("taskmanager:project-teams", pk=project_id)
+        return redirect("taskmanager:project-teams", pk=project_id)
 
 
 class TeamDeleteView(LoginRequiredMixin, generic.DeleteView):
