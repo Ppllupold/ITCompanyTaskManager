@@ -14,20 +14,22 @@ from task_manager_app.forms import (
     ProjectForm,
     TeamForm,
     TaskForm,
-    TaskAssignForm)
-from task_manager_app.models import (
-    Task,
-    Position,
-    Project,
-    Team
+    TaskAssignForm,
 )
+from task_manager_app.models import Task, Position, Project, Team
 
 
 class IndexView(LoginRequiredMixin, View):
     def get(self, request):
-        top_workers = get_user_model().objects.annotate(
-            completed_tasks=Count("assigned_tasks", filter=Q(assigned_tasks__is_completed=True))) \
-                          .order_by("-completed_tasks")[:3]
+        top_workers = (
+            get_user_model()
+            .objects.annotate(
+                completed_tasks=Count(
+                    "assigned_tasks", filter=Q(assigned_tasks__is_completed=True)
+                )
+            )
+            .order_by("-completed_tasks")[:3]
+        )
 
         my_tasks = Task.objects.filter(assignees=request.user, is_completed=False)
 
@@ -94,16 +96,16 @@ class TaskCreateView(LoginRequiredMixin, generic.CreateView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        project_id = self.request.GET.get('project_id')
-        team_id = self.request.GET.get('team_id')
+        project_id = self.request.GET.get("project_id")
+        team_id = self.request.GET.get("team_id")
         if project_id:
-            kwargs['project'] = Project.objects.get(pk=project_id)
+            kwargs["project"] = Project.objects.get(pk=project_id)
         if team_id:
-            kwargs['team'] = Team.objects.get(pk=team_id)
+            kwargs["team"] = Team.objects.get(pk=team_id)
         return kwargs
 
     def form_valid(self, form):
-        project_id = self.request.GET.get('project_id')
+        project_id = self.request.GET.get("project_id")
         if project_id:
             form.instance.project = Project.objects.get(pk=project_id)
         return super().form_valid(form)
@@ -169,11 +171,15 @@ class WorkerListView(LoginRequiredMixin, generic.ListView):
     def get_queryset(self):
 
         queryset = (
-            get_user_model().objects.annotate(task_count=Count("assigned_tasks",
-                                                               filter=Q(assigned_tasks__is_completed=False)),
-                                              team_count=Count("teams")).
-            select_related("position").
-            prefetch_related("assigned_tasks", "teams")
+            get_user_model()
+            .objects.annotate(
+                task_count=Count(
+                    "assigned_tasks", filter=Q(assigned_tasks__is_completed=False)
+                ),
+                team_count=Count("teams"),
+            )
+            .select_related("position")
+            .prefetch_related("assigned_tasks", "teams")
         )
         team_id = self.request.GET.get("team_id")
         if team_id:
@@ -220,10 +226,15 @@ class MarkTaskCompletedView(LoginRequiredMixin, View):
 class WorkerDetailView(LoginRequiredMixin, generic.DetailView):
     model = get_user_model()
     template_name = "TMapp/worker-detail.html"
-    queryset = get_user_model().objects.annotate(
-        task_count=Count("assigned_tasks"),
-        team_count=Count("teams"),
-    ).select_related("position").prefetch_related("assigned_tasks", "teams")
+    queryset = (
+        get_user_model()
+        .objects.annotate(
+            task_count=Count("assigned_tasks"),
+            team_count=Count("teams"),
+        )
+        .select_related("position")
+        .prefetch_related("assigned_tasks", "teams")
+    )
 
 
 class WorkerUpdateView(LoginRequiredMixin, generic.UpdateView):
@@ -247,8 +258,9 @@ class WorkerDeleteView(LoginRequiredMixin, generic.DeleteView):
 class ProjectListView(LoginRequiredMixin, generic.ListView):
     model = Project
     template_name = "TMapp/project-list.html"
-    queryset = (Project.objects.annotate(member_count=Count("teams__members", distinct=True))
-                .prefetch_related("teams"))
+    queryset = Project.objects.annotate(
+        member_count=Count("teams__members", distinct=True)
+    ).prefetch_related("teams")
 
 
 class ProjectDetailView(LoginRequiredMixin, generic.DetailView):

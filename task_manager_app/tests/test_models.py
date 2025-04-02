@@ -15,9 +15,7 @@ class WorkerModelTests(TestCase):
     def setUp(self):
         self.position = Position.objects.create(name="QA")
         self.worker = get_user_model().objects.create_user(
-            username="tester",
-            password="testpass123",
-            position=self.position
+            username="tester", password="testpass123", position=self.position
         )
 
     def test_str_representation(self):
@@ -37,16 +35,14 @@ class TaskModelTests(TestCase):
     def setUp(self):
         self.position = Position.objects.create(name="DevOps")
         self.worker = get_user_model().objects.create_user(
-            username="deployr",
-            password="pass1234",
-            position=self.position
+            username="deployr", password="pass1234", position=self.position
         )
         self.task_type = TaskType.objects.create(name="Deployment")
         self.project = Project.objects.create(
             name="Infra Upgrade",
             description="Upgrading to newer infra",
             deadline=timezone.now() + timedelta(days=10),
-            priority="CRITICAL"
+            priority="CRITICAL",
         )
         self.task = Task.objects.create(
             name="Setup CI/CD",
@@ -55,7 +51,7 @@ class TaskModelTests(TestCase):
             is_completed=False,
             priority="HIGH_PRIORITY",
             task_type=self.task_type,
-            project=self.project
+            project=self.project,
         )
         self.task.assignees.add(self.worker)
 
@@ -75,14 +71,10 @@ class TeamModelTests(TestCase):
     def setUp(self):
         self.position = Position.objects.create(name="Manager")
         self.leader = get_user_model().objects.create_user(
-            username="boss",
-            password="boss123",
-            position=self.position
+            username="boss", password="boss123", position=self.position
         )
         self.member = get_user_model().objects.create_user(
-            username="member1",
-            password="memberpass",
-            position=self.position
+            username="member1", password="memberpass", position=self.position
         )
         self.team = Team.objects.create(name="Alpha Team", leader=self.leader)
         self.team.members.set([self.leader, self.member])
@@ -100,7 +92,7 @@ class ProjectModelTests(TestCase):
             name="Migration",
             description="Move to PostgreSQL",
             deadline=timezone.now() + timedelta(days=15),
-            priority="ESSENTIAL"
+            priority="ESSENTIAL",
         )
 
     def test_str_representation(self):

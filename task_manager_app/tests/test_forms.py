@@ -3,18 +3,21 @@ from django.utils import timezone
 from django.forms import CharField, ChoiceField
 from django.test import TestCase
 
-from task_manager_app.forms import WorkerSearchForm, TaskSearchForm, TaskAssignForm, CustomUserCreationForm, ProjectForm, \
-    TeamForm
+from task_manager_app.forms import (
+    WorkerSearchForm,
+    TaskSearchForm,
+    TaskAssignForm,
+    CustomUserCreationForm,
+    ProjectForm,
+    TeamForm,
+)
 from task_manager_app.models import Position, Task, Team, Project, TaskType, Worker
 
 
 class WorkerSearchFormTest(TestCase):
 
     def test_form_valid_with_correct_data(self):
-        form_data = {
-            "search_field": "username",
-            "search_value": "john"
-        }
+        form_data = {"search_field": "username", "search_value": "john"}
         form = WorkerSearchForm(data=form_data)
         self.assertTrue(form.is_valid())
         self.assertEqual(form.cleaned_data["search_field"], "username")
@@ -25,10 +28,7 @@ class WorkerSearchFormTest(TestCase):
         self.assertTrue(form.is_valid())
 
     def test_form_invalid_with_wrong_search_field(self):
-        form_data = {
-            "search_field": "nonexistent",
-            "search_value": "test"
-        }
+        form_data = {"search_field": "nonexistent", "search_value": "test"}
         form = WorkerSearchForm(data=form_data)
         self.assertFalse(form.is_valid())
         self.assertIn("search_field", form.errors)
@@ -44,7 +44,9 @@ class WorkerSearchFormTest(TestCase):
 class TestTaskSearchForm(TestCase):
 
     def setUp(self):
-        self.valid_priorities = [choice[0] for choice in Task._meta.get_field('priority').choices]
+        self.valid_priorities = [
+            choice[0] for choice in Task._meta.get_field("priority").choices
+        ]
 
     def test_form_valid_with_correct_data(self):
         form_data = {
@@ -62,9 +64,7 @@ class TestTaskSearchForm(TestCase):
         self.assertTrue(form.is_valid())
 
     def test_form_invalid_with_invalid_priority(self):
-        form_data = {
-            "priority": "INVALID_PRIORITY"
-        }
+        form_data = {"priority": "INVALID_PRIORITY"}
         form = TaskSearchForm(data=form_data)
         self.assertFalse(form.is_valid())
         self.assertIn("priority", form.errors)
@@ -79,9 +79,11 @@ class TestTaskSearchForm(TestCase):
     def test_priority_choices_include_blank(self):
         form = TaskSearchForm()
         choices = form.fields["priority"].choices
-        self.assertIn(('', 'All priorities'), choices)
+        self.assertIn(("", "All priorities"), choices)
         for val in self.valid_priorities:
-            self.assertIn((val, dict(Task._meta.get_field('priority').choices)[val]), choices)
+            self.assertIn(
+                (val, dict(Task._meta.get_field("priority").choices)[val]), choices
+            )
 
     def test_form_accepts_various_combinations(self):
         test_cases = [
@@ -97,15 +99,23 @@ class TestTaskSearchForm(TestCase):
         for i, data in enumerate(test_cases):
             with self.subTest(i=i, data=data):
                 form = TaskSearchForm(data=data)
-                self.assertTrue(form.is_valid(), f"Form should be valid for data: {data}")
+                self.assertTrue(
+                    form.is_valid(), f"Form should be valid for data: {data}"
+                )
 
 
 class TaskAssignFormTests(TestCase):
     def setUp(self):
         self.position = Position.objects.create(name="Developer")
-        self.worker1 = Worker.objects.create_user(username="worker1", password="pass", position=self.position)
-        self.worker2 = Worker.objects.create_user(username="worker2", password="pass", position=self.position)
-        self.worker_outside = Worker.objects.create_user(username="outside", password="pass", position=self.position)
+        self.worker1 = Worker.objects.create_user(
+            username="worker1", password="pass", position=self.position
+        )
+        self.worker2 = Worker.objects.create_user(
+            username="worker2", password="pass", position=self.position
+        )
+        self.worker_outside = Worker.objects.create_user(
+            username="outside", password="pass", position=self.position
+        )
 
         self.team = Team.objects.create(name="Team A", leader=self.worker1)
         self.team.members.set([self.worker1, self.worker2])
@@ -172,7 +182,9 @@ class CustomUserCreationFormTests(TestCase):
         self.assertIn("position", form.errors)
 
     def test_form_invalid_if_username_exists(self):
-        Worker.objects.create_user(username="existinguser", password="pass123", position=self.position)
+        Worker.objects.create_user(
+            username="existinguser", password="pass123", position=self.position
+        )
         form_data = {
             "username": "existinguser",
             "email": "another@example.com",
@@ -197,7 +209,7 @@ class ProjectFormTests(TestCase):
             "description": "Project description",
             "deadline": (timezone.now() + timedelta(days=1)).strftime("%Y-%m-%dT%H:%M"),
             "priority": "CRITICAL",
-            "teams": [self.team1.id, self.team2.id]
+            "teams": [self.team1.id, self.team2.id],
         }
         form = ProjectForm(data)
         self.assertTrue(form.is_valid())
@@ -207,7 +219,7 @@ class ProjectFormTests(TestCase):
             "description": "Missing name",
             "deadline": (timezone.now() + timedelta(days=1)).strftime("%Y-%m-%dT%H:%M"),
             "priority": "CRITICAL",
-            "teams": [self.team1.id]
+            "teams": [self.team1.id],
         }
         form = ProjectForm(data)
         self.assertFalse(form.is_valid())
@@ -215,7 +227,9 @@ class ProjectFormTests(TestCase):
 
     def test_deadline_initial_formatting(self):
         deadline = timezone.now() + timedelta(days=1)
-        project = Project(name="Demo", description="desc", deadline=deadline, priority="LOW_PRIORITY")
+        project = Project(
+            name="Demo", description="desc", deadline=deadline, priority="LOW_PRIORITY"
+        )
         form = ProjectForm(instance=project)
         self.assertEqual(form.initial["deadline"], deadline.strftime("%Y-%m-%dT%H:%M"))
 
@@ -223,14 +237,18 @@ class ProjectFormTests(TestCase):
 class TeamFormTests(TestCase):
     def setUp(self):
         self.position = Position.objects.create(name="Developer")
-        self.worker1 = Worker.objects.create_user(username="Auser1", password="pass", position=self.position)
-        self.worker2 = Worker.objects.create_user(username="user2", password="pass", position=self.position)
+        self.worker1 = Worker.objects.create_user(
+            username="Auser1", password="pass", position=self.position
+        )
+        self.worker2 = Worker.objects.create_user(
+            username="user2", password="pass", position=self.position
+        )
 
     def test_valid_data(self):
         form_data = {
             "name": "Team Rocket",
             "leader": self.worker1.id,
-            "members": [self.worker1.id, self.worker2.id]
+            "members": [self.worker1.id, self.worker2.id],
         }
         form = TeamForm(data=form_data)
         self.assertTrue(form.is_valid())
@@ -239,7 +257,7 @@ class TeamFormTests(TestCase):
         form_data = {
             "name": "Team Alpha",
             "leader": self.worker1.id,
-            "members": [self.worker2.id]
+            "members": [self.worker2.id],
         }
         form = TeamForm(data=form_data)
         self.assertTrue(form.is_valid())
@@ -248,7 +266,7 @@ class TeamFormTests(TestCase):
         form_data = {
             "name": "",
             "leader": self.worker1.id,
-            "members": [self.worker1.id]
+            "members": [self.worker1.id],
         }
         form = TeamForm(data=form_data)
         self.assertFalse(form.is_valid())
@@ -256,10 +274,11 @@ class TeamFormTests(TestCase):
 
     def test_members_are_ordered_by_position_name(self):
         pos = Position.objects.create(name="Z")
-        worker_last = Worker.objects.create_user(username="a_user", password="pass", position=pos)
+        worker_last = Worker.objects.create_user(
+            username="a_user", password="pass", position=pos
+        )
 
         form = TeamForm()
         members_queryset = list(form.fields["members"].queryset)
 
         self.assertEqual(members_queryset, [self.worker1, self.worker2, worker_last])
-

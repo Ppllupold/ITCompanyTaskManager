@@ -11,7 +11,9 @@ User = get_user_model()
 class IndexViewTests(TestCase):
     def setUp(self):
         self.position = Position.objects.create(name="Developer")
-        self.user = User.objects.create_user(username="testuser", password="pass", position=self.position)
+        self.user = User.objects.create_user(
+            username="testuser", password="pass", position=self.position
+        )
 
     def test_redirect_if_not_logged_in(self):
         response = self.client.get(reverse("taskmanager:index"))
@@ -27,7 +29,9 @@ class IndexViewTests(TestCase):
 class ProjectListViewTests(TestCase):
     def setUp(self):
         self.position = Position.objects.create(name="Manager")
-        self.user = User.objects.create_user(username="user", password="pass", position=self.position)
+        self.user = User.objects.create_user(
+            username="user", password="pass", position=self.position
+        )
 
     def test_login_required(self):
         response = self.client.get(reverse("taskManagerApp:project-list"))
@@ -43,13 +47,15 @@ class ProjectListViewTests(TestCase):
 class TaskListViewTests(TestCase):
     def setUp(self):
         self.position = Position.objects.create(name="Analyst")
-        self.user = User.objects.create_user(username="testuser", password="pass", position=self.position)
+        self.user = User.objects.create_user(
+            username="testuser", password="pass", position=self.position
+        )
         self.task_type = TaskType.objects.create(name="Bug")
         self.project = Project.objects.create(
             name="Test Project",
             description="A test project",
             deadline=timezone.now() + timedelta(days=2),
-            priority="HIGH_PRIORITY"
+            priority="HIGH_PRIORITY",
         )
         self.task = Task.objects.create(
             name="Test Task",
@@ -75,14 +81,16 @@ class TaskListViewTests(TestCase):
 class TaskCreateViewTests(TestCase):
     def setUp(self):
         self.position = Position.objects.create(name="Developer")
-        self.user = User.objects.create_user(username="creator", password="pass", position=self.position)
+        self.user = User.objects.create_user(
+            username="creator", password="pass", position=self.position
+        )
         self.team = Team.objects.create(name="Team Alpha", leader=self.user)
         self.team.members.add(self.user)
         self.project = Project.objects.create(
             name="My Project",
             description="Desc",
             deadline=timezone.now() + timedelta(days=3),
-            priority="CRITICAL"
+            priority="CRITICAL",
         )
         self.project.teams.add(self.team)
         self.task_type = TaskType.objects.create(name="Feature")
@@ -90,7 +98,9 @@ class TaskCreateViewTests(TestCase):
     def test_get_create_view(self):
         self.client.login(username="creator", password="pass")
         url = reverse("taskmanager:task-create")
-        response = self.client.get(url + f"?project_id={self.project.id}&team_id={self.team.id}")
+        response = self.client.get(
+            url + f"?project_id={self.project.id}&team_id={self.team.id}"
+        )
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "TMapp/task_form.html")
 
@@ -98,7 +108,9 @@ class TaskCreateViewTests(TestCase):
 class WorkerListViewTests(TestCase):
     def setUp(self):
         self.position = Position.objects.create(name="QA")
-        self.user = User.objects.create_user(username="worker", password="pass", position=self.position)
+        self.user = User.objects.create_user(
+            username="worker", password="pass", position=self.position
+        )
 
     def test_requires_login(self):
         response = self.client.get(reverse("taskmanager:worker-list"))

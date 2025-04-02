@@ -18,7 +18,9 @@ class Position(models.Model):
 
 
 class Worker(AbstractUser):
-    position = models.ForeignKey(Position, on_delete=models.CASCADE, related_name="workers")
+    position = models.ForeignKey(
+        Position, on_delete=models.CASCADE, related_name="workers"
+    )
 
     class Meta:
         verbose_name = "driver"
@@ -43,7 +45,9 @@ class Task(models.Model):
     priority = models.CharField(max_length=100, choices=PRIORITY_CHOICES)
     task_type = models.ForeignKey(TaskType, on_delete=models.CASCADE)
     assignees = models.ManyToManyField(Worker, related_name="assigned_tasks")
-    project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="tasks")
+    project = models.ForeignKey(
+        "Project", on_delete=models.CASCADE, related_name="tasks"
+    )
 
     def __str__(self):
         return self.name
@@ -51,7 +55,9 @@ class Task(models.Model):
 
 class Team(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    leader = models.ForeignKey(Worker, on_delete=models.SET_NULL, null=True, related_name="led_teams")
+    leader = models.ForeignKey(
+        Worker, on_delete=models.SET_NULL, null=True, related_name="led_teams"
+    )
     members = models.ManyToManyField(Worker, related_name="teams")
 
     def __str__(self):
@@ -69,5 +75,3 @@ class Project(models.Model):
 
     def __str__(self):
         return self.name
-
-
