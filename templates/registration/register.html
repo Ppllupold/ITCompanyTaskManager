@@ -1,0 +1,30 @@
+{% extends "layouts/base-fullscreen.html" %}
+{% load crispy_forms_filters %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+	<div class="auth-wrapper">
+		<div class="auth-content">
+			<div class="card">
+				<div class="row align-items-center text-center">
+					<div class="col-md-12">
+						<div class="card-body">
+							<img src="/static/assets/images/projectary-logo-cropped.png" alt="Logo" class="img-fluid mb-4" style="height: 100px">
+							<h4 class="mb-3 f-w-400">Sign Up</h4>
+
+							<form method="post">
+								{% csrf_token %}
+								{{ form|crispy }}
+
+								<button type="submit" class="btn btn-block btn-success mt-2 mb-4">Sign Up</button>
+							</form>
+
+							<p class="mb-0 text-muted">Already have an account? <a href="{% url 'login' %}" class="f-w-400">Sign in</a></p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

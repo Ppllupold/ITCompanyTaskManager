@@ -1,0 +1,19 @@
+<header class="navbar pcoded-header navbar-expand-lg navbar-light headerpos-fixed header-blue">
+  <div class="m-header d-flex align-items-center gap-3">
+    
+    <a class="mobile-menu" id="mobile-collapse" href="#">
+      <i class="feather icon-menu" style="font-size: 22px;"></i>
+    </a>
+    
+    <a href="{% url 'taskmanager:index' %}" class="b-brand d-flex align-items-center">
+      <img src="/static/assets/images/projectary-logo-cropped.png" alt="Logo"
+           style="height: 51px; object-fit: contain;">
+    </a>
+
+  </div>
+
+  <div class="collapse navbar-collapse">
+    <ul class="navbar-nav me-auto"></ul>
+    <ul class="navbar-nav ms-auto"></ul>
+  </div>
+</header>

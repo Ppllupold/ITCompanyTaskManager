@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <title>Projectary</title>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta name="description" content=""/>
+  <meta name="keywords" content="">
+  <meta name="author" content="Codedthemes, AppSeed"/>
+
+
+  <link rel="icon" href="/static/assets/images/projectary-logo-cropped.png" type="image/png">
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.min.css">
+
+  <link rel="stylesheet" href="/static/assets/css/style.css">
+
+</head>
+<body class="" style="background-color: #cceeff;">
+
+<div class="loader-bg">
+  <div class="loader-track">
+    <div class="loader-fill"></div>
+  </div>
+</div>
+
+{% include 'includes/sidebar.html' %}
+
+{% include 'includes/navigation.html' %}
+
+{% block content %}{% endblock content %}
+
+{% include 'includes/scripts.html' %}
+
+</body>
+</html>
+

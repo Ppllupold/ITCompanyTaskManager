@@ -1,0 +1,78 @@
+{% extends "layouts/base.html" %}
+{% load crispy_forms_filters %}
+
+{% block title %}Assign Assignees to Task{% endblock %}
+
+
+{% block content %}
+  {% block stylesheets %}
+    <style>
+        .card-body form {
+            font-size: 1.15rem;
+        }
+
+        .card-header h5 {
+            font-size: 1.6rem;
+        }
+
+        .page-header-title h5 {
+            font-size: 1.6rem;
+        }
+
+
+        .btn {
+            font-size: 0.8rem;
+            padding: 12px 25px;
+        }
+
+    </style>
+  {% endblock stylesheets %}
+  <div class="pcoded-main-container">
+    <div class="pcoded-content">
+      <div class="page-header">
+        <div class="page-block">
+          <div class="row align-items-center">
+            <div class="col-md-12">
+              <div class="page-header-title">
+                <h5 class="m-b-10">Assign Assignees for: <strong>{{ object.name }}</strong></h5>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="card shadow-sm p-4">
+            <div class="card-header bg-light mb-4">
+              <h5><i class="feather icon-users mr-2"></i>Select Assignees</h5>
+            </div>
+            <div class="card-body">
+              <form method="post">
+                {% csrf_token %}
+
+                <div class="form-group mb-4">
+                  {{ form.assignees|as_crispy_field }}
+                  {% if form.assignees.errors %}
+                    <div class="text-danger">{{ form.assignees.errors }}</div>
+                  {% endif %}
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                  <a href="{% url 'taskManagerApp:task-detail' pk=object.pk %}" class="btn btn-outline-secondary">
+                    <i class="feather icon-arrow-left mr-1"></i> Back to Task
+                  </a>
+                  <button type="submit" class="btn btn-success">
+                    <i class="feather icon-check-circle mr-1"></i> Save Assignees
+                  </button>
+                </div>
+
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+{% endblock %}
